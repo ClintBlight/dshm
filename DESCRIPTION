@@ -1,0 +1,33 @@
+Package: dshm
+Type: Package
+Title: Density surface modelling unsing Hurdle approach for zero inflation
+Version: 0.1.0
+Authors@R: person("Filippo", "Franchini", email = "filippo.franchini@outlook.com",
+  role = c("aut", "cre"))
+Maintainer: The package maintainer <filippo.franchini@outlook.com>
+Description: Handles transect lines and fits spatial Hurdle models 
+    (i.e. presence-absence submodel and a submodel for abundance 
+    conditional on presence) to distance sampling data.
+Depends: R (>= 3.4)
+Date: 2018-02-03
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: Distance,
+    dplyr,
+    mgcv,
+    ggplot2,
+    raster,
+    rgdal,
+    rgeos,
+    maptools,
+    sf,
+    sp,
+    MuMIn,
+    countreg,
+    parallel,
+    doMC,
+    foreach,
+    inlmisc,
+    spatial
+RoxygenNote: 6.0.1
