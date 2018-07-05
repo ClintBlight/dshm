@@ -1,0 +1,6 @@
+exportPattern("^[[:alpha:]]+")
+importFrom("grDevices", "dev.new", "rgb")
+importFrom("graphics", "abline", "lines", "plot")
+importFrom("stats", "as.formula", "binomial", "logLik", "median",
+             "na.omit", "pchisq", "predict", "weights")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar")
