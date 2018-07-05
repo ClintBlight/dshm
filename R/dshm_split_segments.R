@@ -110,12 +110,21 @@ dshm_split_segments<-function(transect.data,inter.dist,lwr,search.time,w,paralle
   t1<-proc.time() #starts recording time
   cat("\n\n Splitting transects...\n\n ") #message
   if (parallel=="TRUE") { #parallel execution
-    cl<-doMC::registerDoMC(ncores) #register cores
+    if(Sys.info()[[1]]=="Windows"){
+      cl<-doParallel::makeCluster(ncores)
+    } else {
+      cl<-doMC::registerDoMC(ncores) #register cores
+    }
+
     `%dopar%` <- foreach::`%dopar%`
 
     segments<-foreach::foreach(i=1:length(transect.data)) %dopar% { #running the 'dshm_split_segments' on multiple cores
       ext<-dshm_split_segment(transect.data[i,],inter.dist,lwr,search.time,w,cap=cap)
       return(ext) #returning segments
+    }
+
+    if(Sys.info()[[1]]=="Windows"){
+      doParallel::stopCluster(cl)
     }
 
     t2<-(proc.time()-t1) #stopping recording time
