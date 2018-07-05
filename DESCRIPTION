@@ -29,7 +29,5 @@ Imports: Distance,
     doMC,
     foreach,
     inlmisc,
-    spatial,
-    devtools,
-    roxygen2
+    spatial
 RoxygenNote: 6.0.1
