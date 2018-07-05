@@ -112,6 +112,7 @@ dshm_split_segments<-function(transect.data,inter.dist,lwr,search.time,w,paralle
   if (parallel=="TRUE") { #parallel execution
     if(Sys.info()[[1]]=="Windows"){
       cl<-parallel::makeCluster(ncores)
+      doParallel::registerDoParallel(cl)
     } else {
       cl<-doMC::registerDoMC(ncores) #register cores
     }
