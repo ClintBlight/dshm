@@ -170,11 +170,6 @@ dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, method = 
 
   }
 
-    if (parallel) {
-        # for parallel execution
-        cl <- doMC::registerDoMC(ncores)  #register the number of cpus for bootstrap
-    }
-
     # Defining resampling indices (sampling with replacement)----
     ids <- list()  #empty list
     for (i in 1:nsim) {
@@ -203,6 +198,14 @@ dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, method = 
         # model.selection.simplified with the previously resampled rows and stores the values within a 2-dimension array. The routine
         # in embedded within a tryCatch function looking for possible fitting errors due to more parameters than available data. In
         # case of error 'Fitting error' is pasted within the array.
+
+      if(Sys.info()[[1]]=="Windows"){
+        cl<-parallel::makeCluster(ncores)
+        doParallel::registerDoParallel(cl)
+      } else {
+        cl<-doMC::registerDoMC(ncores) #register cores
+      }
+
         `%dopar%` <- foreach::`%dopar%`
         data.array <- foreach::foreach(i = 1:nsim, .combine = cbind) %dopar% {
             possibleError <- tryCatch({mod <- dshm_fit_4boot(det.fn.par, effects.pa,effects.ab, method, lim, distdata, obsdata, segdata, grid, w.pa, w.ab, ID.pa, ID.ab, knots.pa, knots.ab, group, indices = ids[[i]],stratification)}, error = function(e) e,warning=function(w) w)
@@ -214,6 +217,11 @@ dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, method = 
             }
             return(mod)
         }
+
+        if(Sys.info()[[1]]=="Windows"){
+          parallel::stopCluster(cl)
+        }
+
     } else {
         # same thing as before but without parallelization using %do% insted of %dopar%
         `%do%` <- foreach::`%do%`
