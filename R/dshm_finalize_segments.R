@@ -10,11 +10,16 @@
 
 dshm_finalize_segments<-function(segment.data,land.data,covariates,fun,parallel=FALSE,ncores=NULL){
 
-  cl<-doMC::registerDoMC(ncores) #register cores
-
   t1<-proc.time() #starts recording time
   cat("\n\n Correcting segments and sampling covariates...\n\n ") #message
   if (parallel=="TRUE") { #parallel execution
+    if(Sys.info()[[1]]=="Windows"){
+      cl<-parallel::makeCluster(ncores)
+      doParallel::registerDoParallel(cl)
+    } else {
+      cl<-doMC::registerDoMC(ncores) #register cores
+    }
+
     `%dopar%` <- foreach::`%dopar%`
 
     segments<-foreach::foreach(i=1:length(segment.data)) %dopar% { #running the 'dshm_split_segments' on multiple cores
@@ -28,6 +33,10 @@ dshm_finalize_segments<-function(segment.data,land.data,covariates,fun,parallel=
         colnames(ext@data)[i+4]<-paste(names(covariates)[i])
       }
       return(ext) #returning segments
+    }
+
+    if(Sys.info()[[1]]=="Windows"){
+      parallel::stopCluster(cl)
     }
 
     t2<-(proc.time()-t1) #stopping recording time
