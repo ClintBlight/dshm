@@ -12,9 +12,9 @@
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
 
-dshm_split_segments<-function(transect.data,inter.dist,lwr,search.time,w,parallel=FALSE,ncores=NULL,cap){
+dshm_split_transects<-function(transect.data,inter.dist,lwr,search.time,w,parallel=FALSE,ncores=NULL,cap){
 
-  dshm_split_segment<-function(transect.data,inter.dist,lwr,search.time,w,mute=TRUE,cap){
+  dshm_split_transect<-function(transect.data,inter.dist,lwr,search.time,w,mute=TRUE,cap){
 
     x<-floor(sp::SpatialLinesLengths(transect.data)/lwr) #maximum number of segements given the minimum length for each segment
     if(x<=1){ #if the transect is less than 2x minimum segment length, it will not be splitted
@@ -120,7 +120,7 @@ dshm_split_segments<-function(transect.data,inter.dist,lwr,search.time,w,paralle
     `%dopar%` <- foreach::`%dopar%`
 
     segments<-foreach::foreach(i=1:length(transect.data)) %dopar% { #running the 'dshm_split_segments' on multiple cores
-      ext<-dshm_split_segment(transect.data[i,],inter.dist,lwr,search.time,w,cap=cap)
+      ext<-dshm_split_transect(transect.data[i,],inter.dist,lwr,search.time,w,cap=cap)
       return(ext) #returning segments
     }
 
@@ -136,7 +136,7 @@ dshm_split_segments<-function(transect.data,inter.dist,lwr,search.time,w,paralle
     pb <- txtProgressBar(min = 0, max = length(transect.data), style = 3) #setting progress bar (not available for parallel)
 
     segments<-foreach::foreach(i=1:length(transect.data)) %do% { #running the 'dshm_split_segments'
-      ext<-dshm_split_segment(transect.data[i,],inter.dist,lwr,search.time,w,cap=cap)
+      ext<-dshm_split_transect(transect.data[i,],inter.dist,lwr,search.time,w,cap=cap)
       setTxtProgressBar(pb, i) #updating progress bar at each iteration
       return(ext) #returning segments
     }
