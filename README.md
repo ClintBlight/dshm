@@ -1,7 +1,7 @@
 # dshm
 Density surface Hurdle modelling
 
-This package contains functions to fit density surface models using a Hurdle approach. It also contains useful function to split transect lines into segments, buffer segments, and check for overlapping segments.
+This package contains functions to fit density surface models using a Hurdle approach. It also contains useful functions to split transect lines into segments, buffer segments, and check for overlapping features between segments.
 
 To install the dshm package:
 
