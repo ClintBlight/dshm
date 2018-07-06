@@ -19,11 +19,21 @@ dshm_fill_grid<-function(empty.grid,land.data,cov,fun,ncores,saveRaster=FALSE,na
   grid.cor$y.coord<-sp::coordinates(empty.grid.cor)[,2] #adding column for centroid y's
   grid.cor$area<-raster::area(grid.cor)/10^6 #adding information about area
 
-  doMC::registerDoMC(ncores)
+  if(Sys.info()[[1]]=="Windows"){
+    cl<-parallel::makeCluster(ncores)
+    doParallel::registerDoParallel(cl)
+  } else {
+    cl<-doMC::registerDoMC(ncores) #register cores
+  }
+
   `%dopar%` <- foreach::`%dopar%`
   grid.cor.cov<-foreach::foreach(i = 1:length(cov),.combine = cbind) %dopar% {
     covar.val<-raster::extract(cov[[i]],grid.cor,fun,na.rm=TRUE)[,1]
     return(covar.val)
+  }
+
+  if(Sys.info()[[1]]=="Windows"){
+    parallel::stopCluster(cl)
   }
 
   grid.cor.cov<-as.data.frame(grid.cor.cov)
