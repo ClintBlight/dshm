@@ -125,7 +125,7 @@ dshm_split_segments<-function(transect.data,inter.dist,lwr,search.time,w,paralle
     }
 
     if(Sys.info()[[1]]=="Windows"){
-      doParallel::stopCluster(cl)
+      parallel::stopCluster(cl)
     }
 
     t2<-(proc.time()-t1) #stopping recording time
