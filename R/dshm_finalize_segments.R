@@ -53,7 +53,7 @@ dshm_finalize_segments<-function(segment.data,land.data,covariates,fun,parallel=
       ext$length<-segment.data[j,]$length
       ext$area<-raster::area(ext)/10^6
       for (i in 1:length(covariates)){
-        ext@data[,i+4]<-raster::extract(covariates[[i]],ext,fun=median,na.rm=TRUE)[1]
+        ext@data[,i+4]<-raster::extract(covariates[[i]],ext,fun=fun,na.rm=TRUE)[1]
         colnames(ext@data)[i+4]<-paste(names(covariates)[i])
       }
       setTxtProgressBar(pb, j) #updating progress bar at each iteration
