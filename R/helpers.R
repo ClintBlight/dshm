@@ -1,4 +1,5 @@
-#' @export
+#'
+#'
 #'
 #'
 dshm_split_transect<-function(transect.data,inter.dist,lwr,search.time,w,mute=TRUE,cap){
