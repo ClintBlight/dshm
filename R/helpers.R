@@ -98,18 +98,22 @@ dshm_split_transect<-function(transect.data,inter.dist,lwr,search.time,w,mute=TR
 dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distdata, obsdata, segdata, grid, w.pa, w.ab, ID.pa, ID.ab, knots.pa, knots.ab, group, indices,stratification) {
 
   # for each simulation, random sampling of the rows of original dataset according to the speciefied number
-  id<-list()
+  if(stratification=="none"){
+    id<-sample(rownames(segdata), replace = TRUE)
+  } else {
 
-  if(stratification=="stratum"){
-    for (j in 1:length(levels(distdata$Region.Label))){
-      id[[j]]<-sample(rownames(subset(distdata,Region.Label==levels(distdata$Region.Label)[j])),replace=TRUE)
+    id<-list()
+    if(stratification=="stratum"){
+      for (j in 1:length(levels(distdata$Region.Label))){
+        id[[j]]<-sample(rownames(subset(distdata,Region.Label==levels(distdata$Region.Label)[j])),replace=TRUE)
+      }
+    } else if (stratification == "transect") {
+      for (j in 1:length(levels(distdata$Transect.Label))){
+        id[[j]]<-sample(rownames(subset(distdata,Transect.Label==levels(distdata$Transect.Label)[j])),replace=TRUE)
+      }
     }
-  } else if(stratification=="transect") {
-    for (j in 1:length(levels(distdata$Transect.Label))){
-      id[[j]]<-sample(rownames(subset(distdata,Transect.Label==levels(distdata$Transect.Label)[j])),replace=TRUE)
-    }
+    id<-do.call(what = c,id)
   }
-  id<-do.call(what = c,id)
 
   distdata <- distdata[id, ]  #randomly resampling rows in distance dataset with replcement
   distdata$object <- rownames(distdata)  #changing object name according to resampling

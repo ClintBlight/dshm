@@ -31,20 +31,22 @@ dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, method = 
     ids <- list()  #empty list
     for (i in 1:nsim) {
       # for each simulation, random sampling of the rows of original dataset according to the speciefied number
-      id<-list()
-
-      if(stratification=="stratum"){
-        for (j in 1:length(levels(cor.seg.def$Region.Label))){
-          id[[j]]<-sample(rownames(subset(cor.seg.def@data,Region.Label==levels(cor.seg.def$Region.Label)[j])),replace=TRUE)
+      if (stratification == "none"){
+        ids[[i]] <- sample(rownames(segdata), replace = TRUE)
+      } else {
+        id<-list()
+        if(stratification=="stratum"){
+          for (j in 1:length(levels(segdata$Region.Label))){
+            id[[j]]<-sample(rownames(subset(segdata,Region.Label==levels(segdata$Region.Label)[j])),replace=TRUE)
+          }
+        } else if(stratification=="transect") {
+          for (j in 1:length(levels(segdata$Transect.Label))){
+            id[[j]]<-sample(rownames(subset(segdata,Transect.Label==levels(segdata$Transect.Label)[j])),replace=TRUE)
+          }
         }
-      } else if(stratification=="transect") {
-        for (j in 1:length(levels(cor.seg.def$Transect.Label))){
-          id[[j]]<-sample(rownames(subset(cor.seg.def@data,Transect.Label==levels(cor.seg.def$Transect.Label)[j])),replace=TRUE)
-        }
+        id<-do.call(what = c,id)
+        ids[[i]] <- id  #random sampling and transformation from chr to num
       }
-      id<-do.call(what = c,id)
-
-      ids[[i]] <- id  #random sampling and transformation from chr to num
     }
 
     # Bootstrapping----
