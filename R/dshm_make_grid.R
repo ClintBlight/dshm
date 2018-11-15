@@ -4,7 +4,7 @@
 #' @param cell.size Grid cell size in meters.
 #' @param projection Grid CRS as specified in raster.
 
-
+#' @export
 dshm_make_grid<-function(extent,cell.size,projection){
   if(sign(extent[1])*sign(extent[2])==1){
     n.cells.x<-floor(abs(abs(extent[2])-abs(extent[1]))/cell.size)

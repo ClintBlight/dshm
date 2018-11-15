@@ -5,7 +5,7 @@
 #' @param xlab Label for x-axis.
 #' @param ylab Label for y-axis.
 
-
+#' @export
 dshm_spatial_correlation<-function(coord,z,xlab,ylab){
   data<-data.frame(x=coord[,1],y=coord[,2],z=z)
   surf<-spatial::surf.ls(6,na.omit(data))

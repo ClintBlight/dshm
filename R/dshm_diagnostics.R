@@ -7,7 +7,7 @@
 #' @param plot If TRUE plots CDF vs EDF and fitted vs. observed values plots. Default is TRUE.
 #' @param plot.n 1 for CDF vs EDF plot and 2 for both CDF vs EDF and fitted vs. observed values plots.
 
-
+#' @export
 dshm_diagnostics<-function(fit.pa,fit.ab,obs,mute=FALSE,plot=TRUE,plot.n=1){
 
   gof<-data.frame(obs) #create a dataset with all observations

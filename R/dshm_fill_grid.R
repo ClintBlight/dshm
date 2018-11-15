@@ -8,8 +8,9 @@
 #' @param saveRaster If TRUE the corrected and filled grid is saved as a shapefile. Default is FALSE.
 #' @param names_simplfied A vector of simplified names for each covariate. Long names might produce problems when saving the grid as a shapefile.
 #' @param file_name Name of the saved grid.
+#' @param save.directory Directory where the grid shapefile has to be placed.
 
-
+#' @export
 dshm_fill_grid<-function(empty.grid,land.data,cov,fun,ncores,saveRaster=FALSE,names_simplfied,file_name,save.directory=NULL){
   grid.cor<-rgeos::gDifference(empty.grid,raster::union(rgeos::gBuffer(land.data, width=0)),byid = TRUE)
   centr.id<-sp::over(empty.grid,raster::aggregate(grid.cor)) #identify cells in empty grid falling within the corrected grid unified, this gives 1's or NA's

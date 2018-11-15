@@ -5,7 +5,7 @@
 #' @return Polygons corrected for overlapping features.
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
-
+#' @export
 dshm_correct_segments<-function(data,intersections){
 
   mod.seg<-list() #empty list for modified segments

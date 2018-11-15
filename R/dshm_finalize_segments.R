@@ -7,7 +7,7 @@
 #' @param parallel If TRUE the function is run on multiple cores. Default is FALSE.
 #' @param ncores Number of cores if parallel is TRUE.
 
-
+#' @export
 dshm_finalize_segments<-function(segment.data,land.data,covariates,fun,parallel=FALSE,ncores=NULL){
 
   t1<-proc.time() #starts recording time

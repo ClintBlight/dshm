@@ -11,7 +11,7 @@
 #' @return Splitted transect lines with buffer and information about: (1) 'Transect.Label' the original transect id, (2) 'Sample.Label' the segment id, (3) 'lenght' the length of the segment, and (4) 'area' the area of the segment.
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
-
+#' @export
 dshm_split_transects<-function(transect.data,inter.dist,lwr,search.time,w,parallel=FALSE,ncores=NULL,cap){
 
   t1<-proc.time() #starts recording time

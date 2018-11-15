@@ -5,7 +5,7 @@
 \title{Corrects grid shapefile for land and calculates covariate statistics within each grid cell}
 \usage{
 dshm_fill_grid(empty.grid, land.data, cov, fun, ncores, saveRaster = FALSE,
-  names_simplfied, file_name)
+  names_simplfied, file_name, save.directory = NULL)
 }
 \arguments{
 \item{empty.grid}{Empty grid shapefile.}
@@ -23,6 +23,8 @@ dshm_fill_grid(empty.grid, land.data, cov, fun, ncores, saveRaster = FALSE,
 \item{names_simplfied}{A vector of simplified names for each covariate. Long names might produce problems when saving the grid as a shapefile.}
 
 \item{file_name}{Name of the saved grid.}
+
+\item{save.directory}{Directory where the grid shapefile has to be placed.}
 }
 \description{
 Corrects grid shapefile for land and calculates covariate statistics within each grid cell

@@ -17,7 +17,7 @@
 #' @return A list of 3 objects: (1) 'models' containing a list for all presence-absence submodel variants ('pa') and all submodel variants for abundance conditional on presence ('ab'); (2) 'info' containing a list of variant weights and best variant ids for both submodels ('weights.pa' and 'weights.ab', and 'ID.pa' and 'ID.ab' respectively); and (3) 'grid_data' containing a list of prediction grids for presence-absence submodel ('pa'), submodel for abundance conditional on presence ('ab'), and Hurdle model ('H').
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
-
+#' @export
 dshm_fit <- function(det.fn, effects.pa = NULL,effects.ab = NULL,knots.pa=NULL ,knots.ab=NULL, method = "GCV.Cp", lim = 0.1, obsdata,
     segdata, grid, SelectionTable = TRUE, showSelectedModels = FALSE, group = FALSE, strip.width = NULL) {
 

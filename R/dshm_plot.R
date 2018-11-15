@@ -15,7 +15,7 @@
 #' @return Map and raster. Raster name contains information in 'map_type' and 'species'.
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
-
+#' @export
 dshm_plot <- function(prediction, species = NULL, grid, map_type = "Hurdle", sightings = FALSE, sightingData,scale_col = c("blue", "yellow",
     "red"), scale_lim = NULL, scale_val = NULL, cex = 1, saveRaster = FALSE, grid.shp) {
 

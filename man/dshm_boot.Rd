@@ -7,7 +7,8 @@
 dshm_boot(det.fn.par, effects.pa = NULL, effects.ab = NULL,
   method = "GCV.Cp", lim = 0.1, distdata, obsdata, segdata, grid, w.pa,
   w.ab, ID.pa, ID.ab, knots.pa, knots.ab, group = FALSE, nsim,
-  parallel = FALSE, ncores = NULL, mute = TRUE)
+  parallel = FALSE, ncores = NULL, mute = TRUE,
+  stratification = "transect")
 }
 \arguments{
 \item{det.fn.par}{Detection function parameters. For strucuture see the documentation for the 'ds' package.}
@@ -49,6 +50,8 @@ dshm_boot(det.fn.par, effects.pa = NULL, effects.ab = NULL,
 \item{ncores}{Number of cpus for parallel execution.}
 
 \item{mute}{If TRUE all unrelevant messages are suppressed. Default is TRUE.}
+
+\item{stratification}{'transect' or 'stratum'}
 }
 \value{
 A list of two arrays: (1) 'sim_grid' containing all simulated grids and (2) 'obs_fit' containing observed and fitted values for each simulation.

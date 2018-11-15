@@ -20,9 +20,11 @@
 #' @param parallel If TRUE the simulations are performed on multiple cpus. Default is FALSE.
 #' @param ncores Number of cpus for parallel execution.
 #' @param mute If TRUE all unrelevant messages are suppressed. Default is TRUE.
+#' @param stratification 'transect' or 'stratum'
 #' @return A list of two arrays: (1) 'sim_grid' containing all simulated grids and (2) 'obs_fit' containing observed and fitted values for each simulation.
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
+#' @export
 dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, method = "GCV.Cp", lim = 0.1, distdata, obsdata, segdata, grid, w.pa, w.ab, ID.pa, ID.ab, knots.pa, knots.ab, group=FALSE, nsim, parallel = FALSE, ncores = NULL, mute = TRUE, stratification="transect") {
 
     # Defining resampling indices (sampling with replacement)----

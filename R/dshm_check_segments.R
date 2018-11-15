@@ -5,7 +5,7 @@
 #' @return Nothing. It tells if there are intersecting polygons and how many are they. In case of match, it stores in the Global Environent a list 'int.ids' containing the ids of all intersecting polygons. This is used by 'dshm_correct_segments'.
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
-
+#' @export
 dshm_check_segments<-function(data,plot=FALSE){
 
   mat<-rgeos::gIntersects(rgeos::gBuffer(data, byid=TRUE, width=0),byid=TRUE,checkValidity=TRUE) #matrix for intersections, 'TRUE' if interaction

@@ -8,7 +8,7 @@
 #' @return Input dataframe 'segdata' with an additional column for animal abundance ('abund') corrected by the detection probability estimated by ds. If they are not included, a column for presence-absence ('pa') is added together with one for segment area (Effort*w, i.e. the strip width estimated by ds).
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
-
+#' @export
 dshm_prep <- function(det.fn, obsdata, segdata, group=FALSE, strip.width=NULL) {
 
     if(is.null(det.fn)){
