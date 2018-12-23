@@ -33,7 +33,10 @@ Imports: Distance,
     roxygen2
 Suggests:
     doMC,
-    doParallel
+    doParallel,
+    knitr,
+    rmarkdown
 RoxygenNote: 6.0.1
 URL: http://github.com/FilippoFranchini/dshm
 BugReports: http://github.com/FilippoFranchini/dshm/issues
+VignetteBuilder: knitr
