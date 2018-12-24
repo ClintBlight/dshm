@@ -13,9 +13,10 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  dpi=300
 )
-#save(raw.trans,file = "/Users/User/Desktop/dshm/datasets/data_split_transects.Rdata")
+#save(transects,file = "/Users/User/Desktop/dshm/datasets/data_split_transects.Rdata")
 load("/Users/User/Desktop/dshm/datasets/data_split_transects.RData")
 ```
 
@@ -33,54 +34,10 @@ In this tutorial you will learn how to use the `dshm` R-package to:
 
 The object `raw.trans` is a `SptialLinesDataFrame` containign 72 lines (i.e. transects) with data associated with each line that you can access by typing:
       
-    raw.trans@data
+    transects@data
 
 You can show the `raw.trans` data by typing
 
-    raster::plot(raw.trans)
-
-This should produce a plot like this one
-
-```{r}
-raster::plot(raw.trans)
+```{r, echo=FALSE, out.width = "300px"}
+raster::plot(transects)
 ```
-
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
-```
-
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
