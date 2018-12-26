@@ -37,8 +37,8 @@ To install the `dshm` package you can run the following code:
 
     devtools::install_github("FilippoFranchini/dshm")
     
-
-
+As you may notice you need the `devtools` package that you can easily download usign the code `install.packages("devtools")`. The `dshm` installer will check if you already have the required packages to make `dshm` work properly.
+    
 ## Splitting transects into segments
 ### Basics
 
