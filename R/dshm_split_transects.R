@@ -12,7 +12,7 @@
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
 #' @export
-dshm_split_transects<-function(transect.data,inter.dist,lwr,search.time,w,parallel=FALSE,ncores=NULL,cap){
+dshm_split_transects<-function(transect.data,inter.dist,lwr,search.time,w,parallel=FALSE,ncores=NULL,cap = TRUE){
 
   t1<-proc.time() #starts recording time
   cat("\n\n Splitting transects...\n\n ") #message

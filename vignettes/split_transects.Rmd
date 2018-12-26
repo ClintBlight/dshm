@@ -1,5 +1,5 @@
 ---
-title: "How to easily split transects into segemnts using the dshm-package"
+title: "How to easily split transects into segments using the dshm-package"
 author: "Filippo Franchini"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -16,28 +16,118 @@ knitr::opts_chunk$set(
   comment = "#>",
   dpi=300
 )
-#save(transects,file = "/Users/User/Desktop/dshm/datasets/data_split_transects.Rdata")
+#save('transects','segments','segments_1km','segments_1km_1s',file = "/Users/User/Desktop/dshm/datasets/data_split_transects.Rdata")
 load("/Users/User/Desktop/dshm/datasets/data_split_transects.RData")
 ```
+
+##Summary
 
 In this tutorial you will learn how to use the `dshm` R-package to:
 
 - Split transects into segments and apply a buffer to them using the `dshm_split_transects` function
-- Check if segments have overlapping areas using the `dshm_check_segments` function. You can decide to correct the segments using the function `dshm_correct_segments` and re-check to proof all the overlapping areas have been deleted.
+- Check if segments have overlapping areas using the `dshm_check_segments` function. You can decide to correct the segments using the function `dshm_correct_segments` and re-check to prove all the overlapping areas have been deleted.
 - Finalize the segments for spatial analyisis using the function `dshm_finalize_segments`. This process includes:
 
     - Taking out overlapping areas between buffered segments and land
     - Calculating covariate statistics for each segment
 
+## Getting started
+
+To install the `dshm` package you can run the following code:
+
+    devtools::install_github("FilippoFranchini/dshm")
+    
+
 
 ## Splitting transects into segments
+### Basics
 
 The object `raw.trans` is a `SptialLinesDataFrame` containign 72 lines (i.e. transects) with data associated with each line that you can access by typing:
       
     transects@data
 
-You can show the `raw.trans` data by typing
+You can show the `transects` data spatially by typing
+
+    raster::plot(transects)
+    
+This should produce something like this
 
 ```{r, echo=FALSE, out.width = "300px"}
 raster::plot(transects)
 ```
+
+As you can see these are spatial lines that represent the transect lines covered by a ship during a survey. Now we would like to split those lines into segments of a certain length and we would also like to convert those segments into polygons. You can easily do that using the funtion `dshm_split_transects` as follows:
+
+    segments <- dshm_split_transects(transect.data = transects,
+    inter.dist = 0.01,
+    lwr = 5000,
+    search.time = 30,
+    w = 1500
+    )
+    
+The console will display a percentage bar and the time needed to complete the operation. As previously, you can show the segments spatially by typing:
+
+    raster::plot(segments)
+
+This will display the following
+
+```{r, echo=FALSE, out.width = "300px"}
+raster::plot(segments)
+```
+
+### Key Arguments
+
+Let's explore each of the arguments of the funtction we used:
+
+- `transect.data` is the `SpatialLinesDataFrame` data you have, i.e. the object containing the transects you would like to split
+- `inter.dist` is the distance between segments in meters. Usually such distance is short, but if you need to, you can set it larger.
+- `lwr` is the lower limit for the length (in meters) of the segments. Segments will never be shorter than the `lwr` value.
+- `search.time` this is the time in seconds the algorithm is searching the solution, i.e. equivalent to precison. Note that this does not correspond to the time required to find the solution! You will see this later.
+- `w` is the strip width, i.e. the buffer in meters applied around each segment to convert them into polygons.
+
+### What you get
+
+Segments have data associated with them. You can show segment data by typing `segments@data`. This will return the following table:
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(segments@data, 6))
+```
+
+In the table you can see four main columns. The `Transect.Label` is the ID of the original transect that has been split, while the `Sample.Label` is the ID of the segments originating from each transect. For each segment we also have `length` (m) and `area` (m^2^). You can see that the first two transects (i.e. 1049102 an 1049103) all have 1 segment, meaning that they were not split. This is due to the fact that we set a `lwr` value of 5 km and those two transects are 4.07 and 6.38 km long, i.e. impossible split them into two segments of 5 km each. The third segment was split into two segments of 5.08 and 6.21 km, respectively. In total the object `segments` contains 26 segments that are >5km in length.
+
+### Parallelization
+
+You are probably confused about the argument `search.time`. Let's say we would like to split our transects into segments with minimum length of 1 km with a search time of 15 s. We can run the following code (but I warn you this will take several minutes!):
+
+    segments_1km <- dshm_split_transects(transect.data = transects,
+    inter.dist = 0.01,
+    lwr = 1000,
+    search.time = 15,
+    w = 1500
+    )
+
+The time required to find the solution is 10.5 minutes. This is because we are asking the function to split the transect into small segments, and to be very precise in doing it. Decreasing the search time from 15s to 1s lowers the time to reach the solution to 1 minute. However, we lost precision since with 15 s we got 114 segments while with 1 s only 99. 
+
+```{r, fig.show='hold', out.width = "300px", echo=FALSE}
+raster::plot(segments_1km, main="Search time = 15s")
+raster::plot(segments_1km_1s, main="Search time = 1s")
+```
+
+Idieally, we would like to have the highest precision using the lowest amount of time. With `dshm` is possible by parallelizing the `dshm_split_transects`. The parallelization process divides the splitting task into samller jobs that are assigned to differert cores on your computer. The code is the same as the previous one, you just have to specify the arguments `prallel` and `ncores` (number of cores you would like to use). For the `ncores` value you have to enter the right amount according to the technical specification of your computer. You can know how many cores has your machine by typing `parallel::detectCores()`. I recommend to leave at least one core free.
+
+You can parallelze the splitting task using the following code:
+    
+    segments_1km_par <- dshm_split_transects(transect.data = transects,
+    inter.dist = 0.01,
+    lwr = 1000,
+    search.time = 15,
+    w = 1500,
+    parallel = TRUE,
+    ncores = 7
+    )
+
+Without parallelization it took 10.5 minutes while with parallelization on 7 cores only 2.4 minutes. Please note that the percentage bar is not displayed for parallel execution. I suggest to monitor the process with task manager: CPUs that are working will be busy while those that finsihed the job will be free. You will usually notice a cascade-like pattern with some cores finishning quickly and others later. Obviously most of the times you do not need to split transect in such small segments, this was just a demonstration about what you can achieve with 'dshm'.
+
+### Capping
+
+
