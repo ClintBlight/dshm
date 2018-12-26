@@ -33,11 +33,15 @@ In this tutorial you will learn how to use the `dshm` R-package to:
 
 ## Getting started
 
-To install the `dshm` package you can run the following code:
+You have to install the `countreg` package that is not available on CRAN.
+
+    install.packages("countreg", repos="http://R-Forge.R-project.org")
+    
+Alternatively, `countreg` can be download as .tar file in the `dshm` /local_repository folder and installed in R studio (go to Packages->Intall->Install Archive File->Search for the downloaded .tar file). After sucessfully installing `countreg` you can install the `dshm` package by running the following code
 
     devtools::install_github("FilippoFranchini/dshm")
     
-As you may notice you need the `devtools` package that you can easily download usign the code `install.packages("devtools")`. The `dshm` installer will check if you already have the required packages to make `dshm` work properly.
+As you may notice you need the `devtools` package that you can easily download usign the code `install.packages("devtools")`. The `dshm` installer will check if you already have the required packages to make `dshm` work properly. Required packages will be automatically installed if you do not have the in your library.
     
 ## Splitting transects into segments
 ### Basics
