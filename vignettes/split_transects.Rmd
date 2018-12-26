@@ -16,8 +16,8 @@ knitr::opts_chunk$set(
   comment = "#>",
   dpi=300
 )
-#save('transects','segments','segments_1km','segments_1km_1s',file = "/Users/User/Desktop/dshm/datasets/data_split_transects.Rdata")
-load("/Users/User/Desktop/dshm/datasets/data_split_transects.RData")
+#save('transects','segments','segments_1km','segments_1km_1s',file = "/Users/User/Desktop/dshm/data/data_split_transects.Rdata")
+load("/Users/User/Desktop/dshm/data/data_split_transects.RData")
 ```
 
 ##Summary
