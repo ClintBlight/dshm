@@ -16,16 +16,13 @@ dshm_check_segments<-function(data){
       next
     }
     int.poly.ids<-colu[colu==TRUE] #select the polygons sharing overlapping areas
-    int.poly<-rgeos::gIntersection(data[i,],data[as.numeric(rownames(as.data.frame(int.poly.ids))),]) #extract just the intersection polygons
+    int.poly<-rgeos::gIntersection(data[i,],data[as.numeric(rownames(as.data.frame(int.poly.ids))),],drop_lower_td = TRUE) #extract just the intersection polygons
     if(!class(int.poly)[1]=="SpatialPolygons"||round(raster::area(int.poly)*10^4)==0){ #if the object is not a polygon or if the area of the polygon is below cm^2 scale then go the next iteration
       next
     }
     int.polys[[i]]<-int.poly #store intersction polygons
     int.ids[[i]]<-as.numeric(rownames(as.data.frame(int.poly.ids))) #store ids of intersecting polygons
   }
-
-  #int.polys<-int.polys
-  #int.ids<-int.ids #this is a list where [[i]] are ids for all segments and [[i]][j] are the segments intersecting with [[i]]th segment. This list is used by the 'dshm_correct_segments'
 
   if(length(int.polys)==0){ #if 'int.polys' is empty then nothing to do
     cat(paste("No overlapping features. Segments are OK."))
