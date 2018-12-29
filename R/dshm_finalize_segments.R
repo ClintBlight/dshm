@@ -8,7 +8,7 @@
 #' @param ncores Number of cores if parallel is TRUE.
 
 #' @export
-dshm_finalize_segments<-function(segment.data,land.data,covariates,fun,parallel=FALSE,ncores=NULL){
+dshm_finalize_segments<-function(segment.data,land.data = NULL,covariates,fun,parallel=FALSE,ncores=NULL){
 
   t1<-proc.time() #starts recording time
   cat("\n\n Correcting segments and sampling covariates...\n\n ") #message
@@ -23,7 +23,11 @@ dshm_finalize_segments<-function(segment.data,land.data,covariates,fun,parallel=
     `%dopar%` <- foreach::`%dopar%`
 
     segments<-foreach::foreach(i=1:length(segment.data)) %dopar% { #running the 'dshm_split_segments' on multiple cores
-      ext<-rgeos::gDifference(segment.data[i,],rgeos::gBuffer(land.data, byid=TRUE, width=0))
+      if (!is.null(land.data)) {
+        ext<-rgeos::gDifference(segment.data[i,],rgeos::gBuffer(land.data, byid=TRUE, width=0))
+      } else {
+        ext <- segment.data[i,]
+      }
       ext$Transect.Label<-segment.data[i,]$Transect.Label
       ext$Sample.Label<-segment.data[i,]$Sample.Label
       ext$length<-segment.data[i,]$length
@@ -47,7 +51,11 @@ dshm_finalize_segments<-function(segment.data,land.data,covariates,fun,parallel=
     pb <- txtProgressBar(min = 0, max = length(segment.data), style = 3) #setting progress bar (not available for parallel)
 
     segments<-foreach::foreach(j=1:length(segment.data)) %do% { #running the 'dshm_split_segments'
-      ext<-rgeos::gDifference(segment.data[j,],rgeos::gBuffer(land.data, byid=TRUE, width=0))
+      if (!is.null(land.data)) {
+        ext<-rgeos::gDifference(segment.data[j,],rgeos::gBuffer(land.data, byid=TRUE, width=0))
+      } else {
+        ext <- segment.data[j,]
+      }
       ext$Transect.Label<-segment.data[j,]$Transect.Label
       ext$Sample.Label<-segment.data[j,]$Sample.Label
       ext$length<-segment.data[j,]$length
