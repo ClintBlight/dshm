@@ -1,5 +1,4 @@
-
-
+#wrap function for dshm_split_transects
 dshm_split_transect<-function(transect.data,inter.dist,lwr,search.time,w,mute=TRUE,cap){
 
   x<-floor(sp::SpatialLinesLengths(transect.data)/lwr) #maximum number of segements given the minimum length for each segment
@@ -93,8 +92,7 @@ dshm_split_transect<-function(transect.data,inter.dist,lwr,search.time,w,mute=TR
   return(seg.buf) #splitted transect with capped ends is returned
 }
 
-
-
+#wrap function for bootstrap
 dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distdata, obsdata, segdata, grid, w.pa, w.ab, ID.pa, ID.ab, knots.pa, knots.ab, group, indices,stratification) {
 
   # for each simulation, random sampling of the rows of original dataset according to the speciefied number
