@@ -1,5 +1,5 @@
 ---
-title: "How to easily split transects into segments using the dshm-package"
+title: "How to easily split transects into segments using the dshm R-package"
 author: "Filippo Franchini"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -16,8 +16,20 @@ knitr::opts_chunk$set(
   comment = "#>",
   dpi=300
 )
-#save('transects','segments','segments_1km','segments_1km_1s',file = "/Users/User/Desktop/dshm/data/data_split_transects.Rdata")
-load("/Users/User/Desktop/dshm/data/data_split_transects.RData")
+
+#devtools::use_data(transects,segments,segments_1km,segments_1km_1s,segments_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,overwrite=TRUE)
+
+load("/Users/User/Desktop/dshm/data/segments.rda")
+load("/Users/User/Desktop/dshm/data/segments_nocap.rda")
+load("/Users/User/Desktop/dshm/data/segments_1km.rda")
+load("/Users/User/Desktop/dshm/data/segments_1km_1s.rda")
+load("/Users/User/Desktop/dshm/data/transects.rda")
+load("/Users/User/Desktop/dshm/data/intersections.rda")
+load("/Users/User/Desktop/dshm/data/cor_seg.rda")
+load("/Users/User/Desktop/dshm/data/depth_crop.rda")
+load("/Users/User/Desktop/dshm/data/DC_crop.rda")
+load("/Users/User/Desktop/dshm/data/DR_crop.rda")
+load("/Users/User/Desktop/dshm/data/land_crop.rda")
 ```
 
 ##Summary
@@ -25,7 +37,7 @@ load("/Users/User/Desktop/dshm/data/data_split_transects.RData")
 In this tutorial you will learn how to use the `dshm` R-package to:
 
 - Split transects into segments and apply a buffer to them using the `dshm_split_transects` function
-- Check if segments have overlapping areas using the `dshm_check_segments` function. You can decide to correct the segments using the function `dshm_correct_segments` and re-check to prove all the overlapping areas have been deleted.
+- Check if segments have overlapping areas using the `dshm_check_segments` function. Correct the segments using the function `dshm_correct_segments` and re-check to prove all the overlapping areas have been deleted.
 - Finalize the segments for spatial analyisis using the function `dshm_finalize_segments`. This process includes:
 
     - Taking out overlapping areas between buffered segments and land
@@ -41,7 +53,12 @@ Alternatively, `countreg` can be download as .tar file in the `dshm` /local_repo
 
     devtools::install_github("FilippoFranchini/dshm")
     
-As you may notice you need the `devtools` package that you can easily download usign the code `install.packages("devtools")`. The `dshm` installer will check if you already have the required packages to make `dshm` work properly. Required packages will be automatically installed if you do not have the in your library.
+As you may notice you need the `devtools` package that you can easily download usign the code `install.packages("devtools")`. The `dshm` installer will check if you already have the required packages to make `dshm` work properly. Required packages will be automatically installed if you do not have them in your library.
+After installing the package you can load it by typing
+
+    library(dshm)
+    
+Now `dshm` is loaded and you have access to all functions and datasets. You can explore all datasets in `dshm` by typing `data(package="dshm")`.
     
 ## Splitting transects into segments
 ### Basics
@@ -117,7 +134,7 @@ raster::plot(segments_1km, main="Search time = 15s")
 raster::plot(segments_1km_1s, main="Search time = 1s")
 ```
 
-Idieally, we would like to have the highest precision using the lowest amount of time. With `dshm` is possible by parallelizing the `dshm_split_transects`. The parallelization process divides the splitting task into samller jobs that are assigned to differert cores on your computer. The code is the same as the previous one, you just have to specify the arguments `prallel` and `ncores` (number of cores you would like to use). For the `ncores` value you have to enter the right amount according to the technical specification of your computer. You can know how many cores has your machine by typing `parallel::detectCores()`. I recommend to leave at least one core free.
+Idieally, we would like to have the highest precision using the lowest amount of time. With `dshm` this is possible by parallelizing the `dshm_split_transects`. The parallelization process divides the splitting task into samller jobs that are assigned to differert cores on your computer. The code is the same as the previous one, you just have to specify the arguments `prallel = TRUE` and `ncores` (number of cores you would like to use). For the `ncores` value you have to enter the right amount according to the technical specification of your computer. You can know how many cores has your machine by typing `parallel::detectCores()`. I recommend to leave at least one core free.
 
 You can parallelze the splitting task using the following code:
     
@@ -130,8 +147,88 @@ You can parallelze the splitting task using the following code:
     ncores = 7
     )
 
-Without parallelization it took 10.5 minutes while with parallelization on 7 cores only 2.4 minutes. Please note that the percentage bar is not displayed for parallel execution. I suggest to monitor the process with task manager: CPUs that are working will be busy while those that finsihed the job will be free. You will usually notice a cascade-like pattern with some cores finishning quickly and others later. Obviously most of the times you do not need to split transect in such small segments, this was just a demonstration about what you can achieve with 'dshm'.
+Without parallelization it took 10.5 minutes while with parallelization on 7 cores only 2.4 minutes. Please note that the percentage bar is not displayed for parallel execution. I suggest to monitor the process with task manager: CPUs that are working will be busy while those that finsihed the job will be free. You will usually notice a cascade-like pattern with some cores finishning quickly and others later. Obviously, most of the times you do not need to split transect in such small segments, this was just a demonstration about what you can achieve with 'dshm'.
 
 ### Capping
 
+Capping is the option to add a cap to each of the two segments at the ends of a transect. Capping is controlled by the argument `cap` and by default it is enabled (i.e. `TRUE`). You can disable it by setting `cap = FALSE`.
 
+```{r, echo=FALSE, out.width = "300px", fig.show='hold'}
+raster::plot(segments,main="With cap")
+raster::plot(segments_nocap,main="No cap")
+```
+
+## Check and Correct Segments
+
+You probably noticed that when you are splitting transects the buffered segments have overlapping areas. For some reasons you might avoid such areas. This is possible with the functions `dshm_check_segments` and `dshm_correct_segments`. You need to use `dshm_check_segments` to create an object with a map of all intersections as follows:
+
+    intersections<-dshm_check_segments(data = segments)
+
+The code you just used displays the message `16  overlapping features found. Go to 'dshm_correct_segments'`, and creates a map of all intersections (available typing `intersections$inter.IDs`) as well as a list of all overlapping areas (available typing `intersections$inter.Polys`). You can show all overlapping areas with the following code:
+
+    raster::plot(segments)
+    raster::plot(intersections$inter.Polys,col="red",add=TRUE)
+    
+This should produce something like this:
+
+```{r, echo=FALSE, out.width = "300px"}
+raster::plot(segments)
+raster::plot(intersections$inter.Polys,col="red",add=TRUE)
+```
+
+This shows in red all overlapping areas. Note that some areas are so small that are impossible to notice with the selected scale. You can now correct the segments as follows:
+
+    cor_seg<-dshm_correct_segments(data = segments,
+                               intersections = intersections$inter.IDs
+                               )
+                               
+You have corrected the segments. To be 100% sure that the function `dshm_correct_segments` did a good job you can always re-check the corrected segments by typing `dshm_check_segments(data = cor.seg)`. If there are no overlapping areas left you should get the message `No overlapping features. Segments are OK`. We can now plot the corrected segments:
+
+```{r, echo=FALSE, out.width = "300px"}
+raster::plot(cor_seg)
+```
+
+Area values are updated according to the correction.
+
+## Covariate Statistics & Land Correction
+
+Now we have our segements with no overlapping areas and with information about:
+
+- Transect origin
+- Segment ID
+- Segment length
+- Segment area
+
+To model animal distribution spatially we would like to:
+
+- Correct for land. This is particularly useful for marine animals that live in coastal waters. In fact, there is high chance that segment buffer might include land or small islands. In order to be precise we have to take out such areas that are never used by marine species.
+- Associate covariate values with each segment. This is compulsory if we want to model (and predict) animal distribution spatially.
+
+These two steps can be easily done with the function `dshm_finalize_segments`. This function corrects the buffered segments for land and calculates covariate statistics for each segment given covariate raster images. You can access three raster images for depth, distance to river and distance to coast at 50 m resolution. You can visualize such raster by typing:
+
+    par(mfrow=c(2,2))
+    raster::plot(depth_crop,main="Depth (m)",axes=FALSE)
+    raster::plot(land_crop,col="grey",add=TRUE)
+    raster::plot(cor_seg,col=rgb(0,0,0,0),lwd=3,add=TRUE)
+    raster::plot(DC_crop/1000,main="Distance to coast (km)",axes=FALSE)
+    raster::plot(land_crop,col="grey",add=TRUE)
+    raster::plot(cor_seg,col=rgb(0,0,0,0),lwd=3,add=TRUE)
+    raster::plot(DR_crop/1000,main="Distance to river (km)",axes=FALSE)
+    raster::plot(land_crop,col="grey",add=TRUE)
+    raster::plot(cor_seg,col=rgb(0,0,0,0),lwd=3,add=TRUE)
+
+You should obtain something like this:
+
+```{r, echo=FALSE, out.width = "300px", fig.show='hold',fig.height=6,fig.width=6}
+raster::plot(depth_crop,main="Depth (m)",axes=FALSE)
+raster::plot(land_crop,col="grey",add=TRUE)
+raster::plot(cor_seg,col=rgb(0,0,0,0),lwd=3,add=TRUE)
+raster::plot(DC_crop/1000,main="Distance to coast (km)",axes=FALSE)
+raster::plot(land_crop,col="grey",add=TRUE)
+raster::plot(cor_seg,col=rgb(0,0,0,0),lwd=3,add=TRUE)
+raster::plot(DR_crop/1000,main="Distance to river (km)",axes=FALSE)
+raster::plot(land_crop,col="grey",add=TRUE)
+raster::plot(cor_seg,col=rgb(0,0,0,0),lwd=3,add=TRUE)
+```
+
+As you notice, the coast is highly convoluted and many buffered segments have overlapping areas with land. 
