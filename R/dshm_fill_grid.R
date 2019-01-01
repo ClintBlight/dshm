@@ -5,14 +5,17 @@
 #' @param cov List of covriate rasters.
 #' @param fun Function for covariate statistcs within each cell (i.e. mean or median).
 #' @param ncores Number of cores (this function is run in parallel only).
-#' @param saveRaster If TRUE the corrected and filled grid is saved as a shapefile. Default is FALSE.
-#' @param names_simplfied A vector of simplified names for each covariate. Long names might produce problems when saving the grid as a shapefile.
-#' @param file_name Name of the saved grid.
-#' @param save.directory Directory where the grid shapefile has to be placed.
+
 
 #' @export
-dshm_fill_grid<-function(empty.grid,land.data,cov,fun,ncores,saveRaster=FALSE,names_simplfied,file_name,save.directory=NULL){
-  grid.cor<-rgeos::gDifference(empty.grid,raster::union(rgeos::gBuffer(land.data, width=0)),byid = TRUE)
+dshm_fill_grid<-function(empty.grid,land.data = NULL,cov,fun,ncores){
+
+  if (!is.null(land.data)){
+    grid.cor <- rgeos::gDifference(empty.grid,raster::union(rgeos::gBuffer(land.data, width=0)),byid = TRUE)
+  } else {
+    grid.cor <- empty.grid
+  }
+
   centr.id<-sp::over(empty.grid,raster::aggregate(grid.cor)) #identify cells in empty grid falling within the corrected grid unified, this gives 1's or NA's
   empty.grid$centr.id<-centr.id #adding info to the empty grid dataframe
   empty.grid.cor<-empty.grid[!is.na(empty.grid$centr.id),] #taking only the 1's
@@ -49,12 +52,6 @@ dshm_fill_grid<-function(empty.grid,land.data,cov,fun,ncores,saveRaster=FALSE,na
 
   grid.cor.nona<-grid.cor[subset(na.id,na==0)$id,]
   grid.cor.nona$id<-c(1:length(grid.cor.nona))
-
-  if (saveRaster){
-    grid_4save<-grid.cor.nona
-    names(grid_4save)<-c("x.coord","y.coord","a",names_simplfied,"id")
-    rgdal::writeOGR(obj=grid_4save,dsn=save.directory,layer=file_name,driver="ESRI Shapefile",overwrite_layer=TRUE)
-  }
 
   return(grid.cor.nona)
 }
