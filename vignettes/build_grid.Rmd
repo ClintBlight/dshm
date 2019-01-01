@@ -1,0 +1,17 @@
+---
+title: "How to easily build a prediction grid with the dshm R-package"
+author: "Filippo Franchini"
+date: "1/1/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dpi=300
+)
+```
+
+
+
