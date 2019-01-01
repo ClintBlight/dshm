@@ -7,7 +7,6 @@ vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-
 ---
 
 ```{r setup, include = FALSE}
@@ -17,7 +16,7 @@ knitr::opts_chunk$set(
   dpi=300
 )
 
-#devtools::use_data(transects,segments,segments_1km,segments_1km_1s,segments_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final,overwrite=TRUE)
+#devtools::use_data(transects,segments,segments_1km,segments_1km_1s,segments_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final,empty_grid,overwrite=TRUE)
 
 load("/Users/User/Desktop/dshm/data/segments.rda")
 load("/Users/User/Desktop/dshm/data/segments_nocap.rda")
@@ -117,7 +116,7 @@ knitr::kable(head(segments@data, 6))
 
 In the table you can see four main columns. The `Transect.Label` is the ID of the original transect that has been split, while the `Sample.Label` is the ID of the segments originating from each transect. For each segment we also have `length` (m) and `area` (m^2^). You can see that the first two transects (i.e. 1049102 an 1049103) all have 1 segment, meaning that they were not split. This is due to the fact that we set a `lwr` value of 5 km and those two transects are 4.07 and 6.38 km long, i.e. impossible split them into two segments of 5 km each. The third segment was split into two segments of 5.08 and 6.21 km, respectively. In total the object `segments` contains 26 segments that are >5km in length.
 
-### Parallelization
+### Parallelization: Speeding-up Calculations
 
 You are probably confused about the argument `search.time`. Let's say we would like to split our transects into segments with minimum length of 1 km with a search time of 15 s. We can run the following code (but I warn you this will take several minutes!):
 
@@ -254,3 +253,19 @@ knitr::kable(head(cor_seg_final@data, 6))
 ```
 
 Where DC and DR are mean values for distances (in meters) to coast and river, respectively.
+
+## Save Segments as Shapefile
+
+You can easily save the segments as a shapefile (i.e. .shp) so that you can import them in other GIS software such as ArcGIS or QGIS. As a first step you have to abbreviate all column descripions:
+
+    names(cor_seg_final)<-c("TL","SL","L","A","DR","DC","D")
+    
+Then you can run the following code:
+
+    rgdal::writeOGR(obj=cor_seg_final,dsn="/Users/User/Desktop/data",layer="cor_seg_final",driver="ESRI Shapefile",overwrite_layer=TRUE)
+    
+You have to specify your own `dsn`, i.e. the directory where the file will be saved. You can then upload the saved file into a GIS software or to reload it into R by typing:
+
+    rgdal::readOGR("cor_seg_final.shp")
+    
+Note that you have to specify the directory where the file was saved.

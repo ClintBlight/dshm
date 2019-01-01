@@ -2,7 +2,11 @@
 title: "How to easily build a prediction grid with the dshm R-package"
 author: "Filippo Franchini"
 date: "1/1/2019"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -11,7 +15,36 @@ knitr::opts_chunk$set(
   comment = "#>",
   dpi=300
 )
+
+load("/Users/User/Desktop/dshm/data/depth_crop.rda")
+load("/Users/User/Desktop/dshm/data/land_crop.rda")
+load("/Users/User/Desktop/dshm/data/empty_grid.rda")
 ```
 
+## Summary
 
+In this tutorial you will learn how to use the `dshm` R-package to:
+
+- Create a prediction grid,
+- Fill the grid with relevant information such as covariate statisitcs.
+
+## Create a grid
+
+You can create an empty grid using the function `dshm_make_grid` as follows:
+
+    empty_grid<-dshm_make_grid(extent = raster::extent(depth_crop),cell.size = 1000,projection =    raster::crs(depth_crop))
+    
+You just created a grid with cell size of 1 km, the extent and projection of the raster `depth_crop`. You can plot the grid using the following code:
+
+    raster::plot(depth_crop)
+    raster::plot(land_crop,col="grey",add=TRUE)
+    raster::plot(empty_grid,add=TRUE)
+    
+```{r, echo=FALSE, out.width = "300px",fig.height=6,fig.width=6}
+raster::plot(depth_crop,main="Depth + empty grid")
+raster::plot(land_crop,col="grey",add=TRUE)
+raster::plot(empty_grid,add=TRUE)
+```
+
+As you may notice that the upper part of the depth raster is not covered by grid cells. This is because, given the specified extent, there is not enough space for a 1x1 km grid cell. Here, we do not care about this problem but if you want to be picky you always have to design your grid bigger than the area in which you want to do your predictions.
 
