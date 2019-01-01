@@ -241,7 +241,7 @@ As you notice, the coast is highly convoluted and many buffered segments have ov
                                           parallel=TRUE,
                                           ncores=7)
                                           
-As the function `dshm_split_transects`, also the function `dshm_finalize_segments` can be parallelized. The code above took 11 seconds while the non-parallelized version 38 seconds. In order to make the function work you have to specify the `segment.data` (i.e. the `SpatialPolygonsDataFrame` from the previous step), `land.data` (i.e. land as `SpatialPolygonsDataFrame`), the `covariates` as a list of `RasterLayer` files, and the `fun` (i.e. the function to be used to calculate the covariate statistics within each segment). The final segments should look like this:
+As the function `dshm_split_transects`, also the function `dshm_finalize_segments` can be parallelized. The code above took 11 seconds while the non-parallelized version 38 seconds. In order to make the function work you have to specify the `segment.data` (i.e. the `SpatialPolygonsDataFrame` from the previous step), `land.data` (i.e. land as `SpatialPolygonsDataFrame`, this can be ignored if there is no land), the `covariates` as a list of `RasterLayer` files, and the `fun` (i.e. the function to be used to calculate the covariate statistics within each segment). The final segments should look like this:
 
 ```{r, echo=FALSE, out.width = "300px",fig.height=6,fig.width=6}
 raster::plot(cor_seg_final,lwd=3)
@@ -253,4 +253,4 @@ With associated covariate values:
 knitr::kable(head(cor_seg_final@data, 6))
 ```
 
-Where DC and DR are the distance (in meters) to coast and river, respectively.
+Where DC and DR are mean values for distances (in meters) to coast and river, respectively.
