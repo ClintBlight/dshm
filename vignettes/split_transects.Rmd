@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   dpi=300
 )
 
-#devtools::use_data(transects,segments,segments_1km,segments_1km_1s,segments_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final,empty_grid,overwrite=TRUE)
+#devtools::use_data(transects,segments,segments_1km,segments_1km_1s,segments_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final,empty_grid,grid_final,overwrite=TRUE)
 
 load("/Users/User/Desktop/dshm/data/segments.rda")
 load("/Users/User/Desktop/dshm/data/segments_nocap.rda")
