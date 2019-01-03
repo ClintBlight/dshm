@@ -82,3 +82,19 @@ knitr::kable(head(round(grid_final@data,2), 6))
 ```
 
 For each grid cell you have the `id`, the centroids `x` and `y` coordinates, `area` in km$^2$, and all the covariates: in this case `depth`, distance to river (`DR`) and to coast (`DC`), in meters.
+
+## Save Grid as Shapefile
+
+You can easily save the grid as a shapefile (i.e. .shp) so that you can import them in other GIS software such as ArcGIS or QGIS. As a first step you have to abbreviate all column descripions:
+
+    names(grid_final)<-c("ID","coord.x","coord.y","A","D","DR","DC")
+    
+Then you can run the following code:
+
+    rgdal::writeOGR(obj=grid_final,dsn="/Users/User/Desktop/data",layer="grid_final",driver="ESRI Shapefile",overwrite_layer=TRUE)
+    
+You have to specify your own `dsn`, i.e. the directory where the file will be saved. You can then upload the saved file into a GIS software or to reload it into R by typing:
+
+    rgdal::readOGR("grid_final.shp")
+    
+Note that you have to specify the directory where the file was saved.
