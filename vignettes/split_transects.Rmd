@@ -16,12 +16,13 @@ knitr::opts_chunk$set(
   dpi=300
 )
 
-#devtools::use_data(transects,segments,segments_1km,segments_1km_1s,segments_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final,empty_grid,grid_final,overwrite=TRUE)
+#devtools::use_data(transects,segments,segments_2km,segments_2km_1s,segments_2km_par,segments_2km_par_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final_all,cor_seg_final,empty_grid,grid_final_all,grid_final,overwrite=TRUE)
 
 load("/Users/User/Desktop/dshm/data/segments.rda")
-load("/Users/User/Desktop/dshm/data/segments_nocap.rda")
-load("/Users/User/Desktop/dshm/data/segments_1km.rda")
-load("/Users/User/Desktop/dshm/data/segments_1km_1s.rda")
+load("/Users/User/Desktop/dshm/data/segments_2km_par_nocap.rda")
+load("/Users/User/Desktop/dshm/data/segments_2km_par.rda")
+load("/Users/User/Desktop/dshm/data/segments_2km.rda")
+load("/Users/User/Desktop/dshm/data/segments_2km_1s.rda")
 load("/Users/User/Desktop/dshm/data/transects.rda")
 load("/Users/User/Desktop/dshm/data/intersections.rda")
 load("/Users/User/Desktop/dshm/data/cor_seg.rda")
@@ -30,13 +31,14 @@ load("/Users/User/Desktop/dshm/data/DC_crop.rda")
 load("/Users/User/Desktop/dshm/data/DR_crop.rda")
 load("/Users/User/Desktop/dshm/data/land_crop.rda")
 load("/Users/User/Desktop/dshm/data/cor_seg_final.rda")
+load("/Users/User/Desktop/dshm/data/cor_seg_final_all.rda")
 ```
 
 ##Summary
 
 In this tutorial you will learn how to use the `dshm` R-package to:
 
-- Split transects into segments and apply a buffer to them using the `dshm_split_transects` function
+- Split transects into segments and apply a buffer to them using the `dshm_split_transects` function.
 - Check if segments have overlapping areas using the `dshm_check_segments` function. Correct the segments using the function `dshm_correct_segments` and re-check to prove all the overlapping areas have been deleted.
 - Finalize the segments for spatial analyisis using the function `dshm_finalize_segments`. This process includes:
 
@@ -45,16 +47,17 @@ In this tutorial you will learn how to use the `dshm` R-package to:
 
 ## Getting started
 
-You have to install the `countreg` package that is not available on CRAN.
+In order to use `dshm` you have to install the `countreg` R-package that is (unfortunately) not available on CRAN. You can install it using the following code:
 
     install.packages("countreg", repos="http://R-Forge.R-project.org")
     
-Alternatively, `countreg` can be download as .tar file in the `dshm` /local_repository folder and installed in R studio (go to Packages->Intall->Install Archive File->Search for the downloaded .tar file). After sucessfully installing `countreg` you can install the `dshm` package by running the following code
+Alternatively, `countreg` can be found as .tar file in the `dshm` /local_repository folder and installed in R studio (go to Packages->Intall->Install Archive File->Search for the downloaded .tar file). 
+After sucessfully installing `countreg` you can install the `dshm` package by running the following code:
 
     devtools::install_github("FilippoFranchini/dshm")
     
 As you may notice you need the `devtools` package that you can easily download usign the code `install.packages("devtools")`. The `dshm` installer will check if you already have the required packages to make `dshm` work properly. Required packages will be automatically installed if you do not have them in your library.
-After installing the package you can load it by typing
+After installing the package you can load it by typing:
 
     library(dshm)
     
@@ -67,11 +70,11 @@ The object `raw.trans` is a `SptialLinesDataFrame` containign 72 lines (i.e. tra
       
     transects@data
 
-You can show the `transects` data spatially by typing
+You can show the `transects` data spatially by typing:
 
     raster::plot(transects)
     
-This should produce something like this
+This should produce something like this:
 
 ```{r, echo=FALSE, out.width = "300px",fig.height=6,fig.width=6}
 raster::plot(transects,lwd=3)
@@ -80,17 +83,16 @@ raster::plot(transects,lwd=3)
 As you can see these are spatial lines that represent the transect lines covered by a ship during a survey. Now we would like to split those lines into segments of a certain length and we would also like to convert those segments into polygons. You can easily do that using the funtion `dshm_split_transects` as follows:
 
     segments <- dshm_split_transects(transect.data = transects,
-    inter.dist = 0.01,
-    lwr = 5000,
-    search.time = 30,
-    w = 1500
-    )
+                inter.dist = 0.01,
+                lwr = 5000,
+                search.time = 30,
+                w = 1500)
     
-The console will display a percentage bar and the time needed to complete the operation. As previously, you can show the segments spatially by typing:
+The console will display a percentage bar and the time needed to complete the operation. You can show the segments spatially by typing:
 
     raster::plot(segments)
 
-This will display the following
+This will display the following plot:
 
 ```{r, echo=FALSE, out.width = "300px",fig.height=6,fig.width=6}
 raster::plot(segments,lwd=3)
@@ -98,9 +100,9 @@ raster::plot(segments,lwd=3)
 
 ### Key Arguments
 
-Let's explore each of the arguments of the funtction we used:
+Let's explore each of the arguments of the funtction `dshm_split_transects`:
 
-- `transect.data` is the `SpatialLinesDataFrame` data you have, i.e. the object containing the transects you would like to split
+- `transect.data` is the `SpatialLinesDataFrame` data you have, i.e. the object containing the transects you would like to split.
 - `inter.dist` is the distance between segments in meters. Usually such distance is short, but if you need to, you can set it larger.
 - `lwr` is the lower limit for the length (in meters) of the segments. Segments will never be shorter than the `lwr` value.
 - `search.time` this is the time in seconds the algorithm is searching the solution, i.e. equivalent to precison. Note that this does not correspond to the time required to find the solution! You will see this later.
@@ -108,79 +110,76 @@ Let's explore each of the arguments of the funtction we used:
 
 ### What you get
 
-Segments have data associated with them. You can show segment data by typing `segments@data`. This will return the following table:
+Segments have data associated with them. You can show segment data by typing `segments@data`. This will show the following table:
 
 ```{r, echo=FALSE, results='asis',fig.height=6,fig.width=6}
 knitr::kable(head(segments@data, 6))
 ```
 
-In the table you can see four main columns. The `Transect.Label` is the ID of the original transect that has been split, while the `Sample.Label` is the ID of the segments originating from each transect. For each segment we also have `length` (m) and `area` (m^2^). You can see that the first two transects (i.e. 1049102 an 1049103) all have 1 segment, meaning that they were not split. This is due to the fact that we set a `lwr` value of 5 km and those two transects are 4.07 and 6.38 km long, i.e. impossible split them into two segments of 5 km each. The third segment was split into two segments of 5.08 and 6.21 km, respectively. In total the object `segments` contains 26 segments that are >5km in length.
+In the table you can see four main columns. The `Transect.Label` is the ID of the original transect that has been split, while the `Sample.Label` is the ID of the segments originating from each transect. For each segment we also have `length` (m) and `area` (m^2^). You can see that the first two transects (i.e. 1049102 an 1049103) all have 1 segment, meaning that they were not split. This is due to the fact that we set a `lwr` value of 5 km and those two transects are 4.07 and 6.38 km long, i.e. impossible split them into two segments of 5 km each. The third segment (i.e. 1049104) was split into two segments of 5.08 and 6.21 km, respectively. In total the object `segments` contains 26 segments that are >5km in length (except for those transects that were not split!).
 
 ### Parallelization: Speeding-up Calculations
 
-You are probably confused about the argument `search.time`. Let's say we would like to split our transects into segments with minimum length of 1 km with a search time of 15 s. We can run the following code (but I warn you this will take several minutes!):
+You are probably confused about the argument `search.time`. Let's say we would like to split our transects into segments with minimum length of 2 km with a search time of 15 s. We can run the following code (this will take a few minutes!):
 
-    segments_1km <- dshm_split_transects(transect.data = transects,
-    inter.dist = 0.01,
-    lwr = 1000,
-    search.time = 15,
-    w = 1500
-    )
+    segments_2km <- dshm_split_transects(transect.data = transects,
+                    inter.dist = 0.01,
+                    lwr = 2000,
+                    search.time = 15,
+                    w = 1500)
 
-The time required to find the solution is 10.5 minutes. This is because we are asking the function to split the transect into small segments, and to be very precise in doing it. Decreasing the search time from 15s to 1s lowers the time to reach the solution to 1 minute. However, we lost precision since with 15 s we got 114 segments while with 1 s only 99. 
+The time required to find the solution is 2.3 minutes. This is because we are asking the function to split the transect into small segments, and to be very precise in doing it. Decreasing the search time from 15 s to 1 s lowers the time to reach the solution to 20 seconds. However, we lost precision since with 15 s we got 64 segments while with 1 s only 58. 
 
 ```{r, fig.show='hold', out.width = "300px", echo=FALSE,fig.height=6,fig.width=6}
-raster::plot(segments_1km,lwd=3, main="Search time = 15s")
-raster::plot(segments_1km_1s,lwd=3, main="Search time = 1s")
+raster::plot(segments_2km,lwd=3, main="Search time = 15s")
+raster::plot(segments_2km_1s,lwd=3, main="Search time = 1s")
 ```
 
-Idieally, we would like to have the highest precision using the lowest amount of time. With `dshm` this is possible by parallelizing the `dshm_split_transects`. The parallelization process divides the splitting task into samller jobs that are assigned to differert cores on your computer. The code is the same as the previous one, you just have to specify the arguments `prallel = TRUE` and `ncores` (number of cores you would like to use). For the `ncores` value you have to enter the right amount according to the technical specification of your computer. You can know how many cores has your machine by typing `parallel::detectCores()`. I recommend to leave at least one core free.
+Idieally, we would like to have the highest precision using the lowest amount of time. This is very useful in situations where we have a lot of transects or very long transects to split into small segments. With `dshm` this is possible by parallelizing the `dshm_split_transects`. The parallelization process divides the splitting task into samller jobs that are assigned to differert cores on your computer. The code is the same as the previous one, you just have to specify the arguments `prallel = TRUE` and `ncores` (number of cores you would like to use). For the `ncores` value you have to enter the right amount according to the technical specification of your computer. You can know how many cores has your machine by typing `parallel::detectCores()`. I recommend to leave at least one core free.
 
-You can parallelze the splitting task using the following code:
+You can parallelize the splitting task using the following code:
     
-    segments_1km_par <- dshm_split_transects(transect.data = transects,
-    inter.dist = 0.01,
-    lwr = 1000,
-    search.time = 15,
-    w = 1500,
-    parallel = TRUE,
-    ncores = 7
-    )
+    segments_2km_par <- dshm_split_transects(transect.data = transects,
+                        inter.dist = 0.01,
+                        lwr = 2000,
+                        search.time = 15,
+                        w = 1500,
+                        parallel = TRUE,
+                        ncores = 7)
 
-Without parallelization it took 10.5 minutes while with parallelization on 7 cores only 2.4 minutes. Please note that the percentage bar is not displayed for parallel execution. I suggest to monitor the process with task manager: CPUs that are working will be busy while those that finsihed the job will be free. You will usually notice a cascade-like pattern with some cores finishning quickly and others later. Obviously, most of the times you do not need to split transect in such small segments, this was just a demonstration about what you can achieve with 'dshm'.
+Without parallelization it took 2.3 minutes while with parallelization on 7 cores only 48 seconds. Please note that the percentage bar is not displayed for parallel execution. I suggest monitoring the process with task manager: CPUs that are working will be busy while those that have finsihed the job will be free. You will usually notice a cascade-like pattern with some cores finishing quickly and others later. Another sign that your computer is doing calculations on many CPUs is just the noise of the fan(s). If the parallelization is working then the temperature will increase and thus also the rpm of the fan(s). Do not worry your computer will not die!
 
 ### Capping
 
 Capping is the option to add a cap to each of the two segments at the ends of a transect. Capping is controlled by the argument `cap` and by default it is enabled (i.e. `TRUE`). You can disable it by setting `cap = FALSE`.
 
 ```{r, echo=FALSE, out.width = "300px", fig.show='hold',fig.height=6,fig.width=6}
-raster::plot(segments,lwd=3,main="With cap")
-raster::plot(segments_nocap,lwd=3,main="No cap")
+raster::plot(segments_2km_par,lwd=3,main="With cap")
+raster::plot(segments_2km_par_nocap,lwd=3,main="No cap")
 ```
 
 ## Check and Correct Segments
 
-You probably noticed that when you are splitting transects the buffered segments have overlapping areas. For some reasons you might avoid such areas. This is possible with the functions `dshm_check_segments` and `dshm_correct_segments`. You need to use `dshm_check_segments` to create an object with a map of all intersections as follows:
+You probably noticed that when you are splitting transects the buffered segments have overlapping areas. Under certain circumstances you may want to avoid such areas. This is possible with the functions `dshm_check_segments` and `dshm_correct_segments`. You need to use `dshm_check_segments` to create an object containing a map of all intersections bwtween buffered segments:
 
-    intersections<-dshm_check_segments(data = segments)
+    intersections<-dshm_check_segments(data = segments_2km_par)
 
-The code you just used displays the message `16  overlapping features found. Go to 'dshm_correct_segments'`, and creates a map of all intersections (available typing `intersections$inter.IDs`) as well as a list of all overlapping areas (available typing `intersections$inter.Polys`). You can show all overlapping areas with the following code:
+The code you just used displays the message `27 overlapping features found. Go to 'dshm_correct_segments'`, and creates a map of all intersections (available typing `intersections$inter.IDs`) as well as a list of all overlapping areas (i.e. intersection polygons, available typing `intersections$inter.Polys`). You can plot all overlapping polygons with the following code:
 
-    raster::plot(segments)
+    raster::plot(segments_2km_par)
     raster::plot(intersections$inter.Polys,col="red",add=TRUE)
     
 This should produce something like this:
 
 ```{r, echo=FALSE, out.width = "300px",fig.height=6,fig.width=6}
-raster::plot(segments,lwd=3)
+raster::plot(segments_2km_par,lwd=3)
 raster::plot(intersections$inter.Polys,col="red",add=TRUE)
 ```
 
-This shows in red all overlapping areas. Note that some areas are so small that are impossible to notice with the selected scale. You can now correct the segments as follows:
+This shows in red all overlapping areas between segments. Note that some areas are so small that are impossible to notice on the selected scale. You can now correct the segments:
 
-    cor_seg<-dshm_correct_segments(data = segments,
-                               intersections = intersections$inter.IDs
-                               )
+    cor_seg <- dshm_correct_segments(data = segments_2km_par, 
+               intersections = intersections$inter.IDs)
                                
 You have corrected the segments. To be 100% sure that the function `dshm_correct_segments` did a good job you can always re-check the corrected segments by typing `dshm_check_segments(data = cor.seg)`. If there are no overlapping areas left you should get the message `No overlapping features. Segments are OK`. We can now plot the corrected segments:
 
@@ -199,12 +198,12 @@ Now we have our segements with no overlapping areas and with information about:
 - Segment length
 - Segment area
 
-To model animal distribution spatially we would like to:
+However, to model animal distribution spatially we would also like to:
 
-- Correct for land. This is particularly useful for marine animals that live in coastal waters. In fact, there is high chance that segment buffer might include land or small islands. In order to be precise we have to take out such areas that are never used by marine species.
+- Correct segments for land. This is particularly useful for marine animals that live in coastal waters. In fact, there is high chance that the segment buffer might include land or small islands. In order to be precise we have to take out such areas that are never 'used' by marine species.
 - Associate covariate values with each segment. This is compulsory if we want to model (and predict) animal distribution spatially.
 
-These two steps can be easily done with the function `dshm_finalize_segments`. This function corrects the buffered segments for land and calculates covariate statistics for each segment given covariate raster images. You can access three raster images for depth, distance to river and distance to coast at 50 m resolution. You can visualize such raster by typing:
+These two steps can be easily done with the function `dshm_finalize_segments`. This function corrects the buffered segments for land and calculates covariate statistics for each segment given covariate raster images. You can access three raster images for `depth`, distance to river (`DR`) and distance to coast (`DC`) at 50 m resolution. You can visualize such rasters together with land and corrected segmnets by typing:
 
     par(mfrow=c(2,2))
     raster::plot(depth_crop,main="Depth (m)",axes=FALSE)
@@ -233,26 +232,34 @@ raster::plot(cor_seg,col=rgb(0,0,0,0),lwd=3,add=TRUE)
 
 As you notice, the coast is highly convoluted and many buffered segments have overlapping areas with land. You can finalize your segments by typing:
 
-    cor_seg_final<-dshm_finalize_segments(segment.data = cor_seg,
-                                          land.data = land_crop,
-                                          covariates = list(DR=DR_crop,DC=DC_crop,depth=depth_crop),
-                                          fun=mean,
-                                          parallel=TRUE,
-                                          ncores=7)
+    cor_seg_final <- dshm_finalize_segments(segment.data = cor_seg,
+                     land.data = land_crop,
+                     covariates = list(DR=DR_crop,DC=DC_crop,depth=depth_crop),
+                     fun=mean,
+                     parallel=TRUE,
+                     ncores=7)
                                           
-As the function `dshm_split_transects`, also the function `dshm_finalize_segments` can be parallelized. The code above took 11 seconds while the non-parallelized version 38 seconds. In order to make the function work you have to specify the `segment.data` (i.e. the `SpatialPolygonsDataFrame` from the previous step), `land.data` (i.e. land as `SpatialPolygonsDataFrame`, this can be ignored if there is no land), the `covariates` as a list of `RasterLayer` files, and the `fun` (i.e. the function to be used to calculate the covariate statistics within each segment). The final segments should look like this:
+As the function `dshm_split_transects`, also the function `dshm_finalize_segments` can be parallelized. The code above took 11 seconds while the non-parallelized version 40 seconds. In order to make the function work you have to specify the `segment.data` (i.e. the `SpatialPolygonsDataFrame` from the previous step), `land.data` (i.e. land as `SpatialPolygonsDataFrame`, this can be ignored if there is no land), the `covariates` as a list of `RasterLayer` files, and the `fun` (i.e. the function to be used to calculate the covariate statistics within each segment). The final segments should look like this:
 
 ```{r, echo=FALSE, out.width = "300px",fig.height=6,fig.width=6}
-raster::plot(cor_seg_final,lwd=3)
+raster::plot(cor_seg_final_all,lwd=3)
 ```
 
 With associated covariate values:
 
 ```{r, echo=FALSE, results='asis',fig.height=6,fig.width=6}
-knitr::kable(head(cor_seg_final@data, 6))
+knitr::kable(head(cor_seg_final_all@data,6))
 ```
 
-Where DC and DR are mean values for distances (in meters) to coast and river, respectively.
+Where DC and DR are mean values for distances (in meters) to coast and river, respectively. If we inspect carefully the data we notice that there may be some segments with positive `depth`. Since this is impossible, we have to take out those segments with the following code:
+
+    cor_seg_final<-cor_seg_final[cor_seg_final$depth<0,]
+
+One segment was deleted in the process:
+
+```{r, echo=FALSE, out.width = "300px",fig.height=6,fig.width=6}
+raster::plot(cor_seg_final,lwd=3)
+```
 
 ## Save Segments as Shapefile
 

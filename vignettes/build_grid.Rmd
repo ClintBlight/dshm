@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 load("/Users/User/Desktop/dshm/data/depth_crop.rda")
 load("/Users/User/Desktop/dshm/data/land_crop.rda")
 load("/Users/User/Desktop/dshm/data/empty_grid.rda")
+load("/Users/User/Desktop/dshm/data/grid_final_all.rda")
 load("/Users/User/Desktop/dshm/data/grid_final.rda")
 ```
 
@@ -26,14 +27,16 @@ load("/Users/User/Desktop/dshm/data/grid_final.rda")
 
 In this tutorial you will learn how to use the `dshm` R-package to:
 
-- Create a prediction grid
+- Create a prediction grid.
 - Fill the grid with relevant information such as covariate statisitcs.
 
 ## Create a grid
 
 You can create an empty grid using the function `dshm_make_grid` as follows:
 
-    empty_grid<-dshm_make_grid(extent = raster::extent(depth_crop),cell.size = 1000,projection =    raster::crs(depth_crop))
+    empty_grid<-dshm_make_grid(extent = raster::extent(depth_crop),
+                cell.size = 1000,
+                projection = raster::crs(depth_crop))
     
 You just created a grid with cell size of 1 km (i.e. 1000 m), the extent and projection of the raster `depth_crop`. You can plot the grid using the following code:
 
@@ -54,21 +57,19 @@ As you may notice the upper part of the depth raster is not covered by grid cell
 Now, we will correct the grid cells for land and we will add covariate statistics using the function `dshm_fill_grid` as follows:
 
     grid_final<-dshm_fill_grid(empty.grid = empty_grid,
-      land.data = land_crop,
-      cov = list(depth=depth_crop,
-      DR=DR_crop,
-      DC=DC_crop),
-      fun = mean,
-      ncores = 7)
+                land.data = land_crop,
+                cov = list(depth=depth_crop,DR=DR_crop,DC=DC_crop),
+                fun = mean,
+                ncores = 7)
 
-The function works only in parallel with at least 2 cores (i.e. almost all computers). This is because, depending on the raster resolution and the number of grid cells, the tasks requires a lot of time-consuming computations. The parallelization divides the grid into smaller parts that are given to different cores. In the function you can specify the arguments: `empty.grid` (i.e. the grid created with the function `dshm_make_grid`), `cov` (i.e. a list of covariate rasters), `fun` (i.e. the function to calculate covariate statisitcs within each grid cell), and `ncores` (i.e. the number of cores).
+The function works only in parallel with at least 2 cores (i.e. almost all computers). This is because, depending on the raster resolution and the number of grid cells, the tasks requires a lot of time-consuming computations. The parallelization divides the grid into smaller grids that are given to different cores. In the function you can specify the arguments: `empty.grid` (i.e. the grid created with the function `dshm_make_grid`), `cov` (i.e. a list of covariate rasters), `fun` (i.e. the function to calculate covariate statisitcs within each grid cell), and `ncores` (i.e. the number of cores).
 
 After running the function `dshm_fill_grid` you can visualize the final grid by typing:
 
     raster::plot(grid_final)
     
 ```{r, echo=FALSE, out.width = "300px",fig.height=6,fig.width=6}
-raster::plot(grid_final)
+raster::plot(grid_final_all)
 ```
 
 As well as check the related data by typing:
@@ -78,10 +79,29 @@ As well as check the related data by typing:
 You should get something like this:
  
 ```{r, echo=FALSE, results='asis',fig.height=6,fig.width=6}
-knitr::kable(head(round(grid_final@data,2), 6))
+knitr::kable(head(round(grid_final_all@data,2), 6))
 ```
 
 For each grid cell you have the `id`, the centroids `x` and `y` coordinates, `area` in km$^2$, and all the covariates: in this case `depth`, distance to river (`DR`) and to coast (`DC`), in meters.
+
+As for segments, some grid cell values for `depth` may by greater than 0. Moreover, we do not want to predict outside the covariate intervals of our segments, which will be used to calibrate the model. Predictions outside calibration intervals may generate unprobabilistic results. We have thus to exclude those grid cells whose covariate values are outside the covariate values of our segments. We can use the following code to create the segment covariate limits:
+
+    limits<-list(depth=min(cor_seg_final$depth),
+            DC=max(cor_seg_final$DC),
+            DR=max(cor_seg_final$DR))
+    
+And then we can use the specified limits to exclude the grid cells:
+
+    grid_final<-grid_final[grid_final$depth>=limits$depth&
+                grid_final$depth<0&
+                grid_final$DC<=limits$DC&
+                grid_final$DR<=limits$DR,]
+    
+The new grid looks like this:
+
+```{r, echo=FALSE, out.width = "300px",fig.height=6,fig.width=6}
+raster::plot(grid_final)
+```
 
 ## Save Grid as Shapefile
 
