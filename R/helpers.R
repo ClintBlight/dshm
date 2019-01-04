@@ -97,7 +97,7 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
 
   # for each simulation, random sampling of the rows of original dataset according to the speciefied number
   if(stratification=="none"){
-    id<-sample(rownames(segdata), replace = TRUE)
+    id<-sample(rownames(distdata), replace = TRUE)
   } else {
 
     id<-list()
@@ -118,6 +118,7 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
   if (group) {
     distdata$size<-1
   }
+
   det.fn <- Distance::ds(data = distdata, transect = det.fn.par$transect, key = det.fn.par$key, adjustment = det.fn.par$adjustment, truncation = det.fn.par$truncation,
                          formula = det.fn.par$formula, quiet = TRUE)  #fitting detection function
 
