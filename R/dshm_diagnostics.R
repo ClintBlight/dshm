@@ -1,14 +1,16 @@
 #' Computes CDF and plots CDF vs. EDF relationship for dshm objects
 #'
-#' @param fit.pa Fitted values from binomial submodel
-#' @param fit.ab Fitted values from zero-truncated Poisson submodel
-#' @param obs Observation (same length as fit.pa and fit.ab)
+#' @param model Fitted Hurdle model
 #' @param mute If TRUE returns p-value and test statistics for Kolmogorov-Smirnov test. Default is FALSE.
 #' @param plot If TRUE plots CDF vs EDF and fitted vs. observed values plots. Default is TRUE.
 #' @param plot.n 1 for CDF vs EDF plot and 2 for both CDF vs EDF and fitted vs. observed values plots.
 
 #' @export
-dshm_diagnostics<-function(fit.pa,fit.ab,obs,mute=FALSE,plot=TRUE,plot.n=1){
+dshm_diagnostics<-function(model,mute=FALSE,plot=TRUE,plot.n=1){
+
+  obs <- model$obs
+  fit.pa <- model$fitted$pa
+  fit.ab <- model$fitted$ab.full
 
   gof<-data.frame(obs) #create a dataset with all observations
   gof$pa<-rep(0,length(gof[,1]))
