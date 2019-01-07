@@ -1,20 +1,13 @@
 #' Non-parametric bootstrap for Hurdle model uncertainty
 #'
-#' @param det.fn.par Detection function parameters. For strucuture see the documentation for the 'ds' package.
+#' @param det.fn.par List of detection function parameters. For strucuture see the documentation for the 'ds' package.
 #' @param effects.pa List of characters defining the binomial gam models to be fitted. For model structure see \code{\link[mgcv]{gam}}.
 #' @param effects.ab List of characters defining the zero-truncated Poisson gam models to be fitted. For model structure see \code{\link[mgcv]{gam}}.
-#' @param method Character. Fitting method for gam as in the 'mgcv' package. Note that 'REML' is not available since it is not campatible with the zero-truncated poisson in the 'countreg' package. Default is 'GCV.Cp'.
-#' @param lim AIC weight (AICw) threshold for model averaging. Models with AICw < lim are not averaged. Default is 0.1.
 #' @param distdata Dataframe for distance sampling observations. For strucuture see the documentation for the 'ds' package.
 #' @param obsdata Dataframe object containing 4 columns: (1) 'Sample.Label' (i.e. label for segments), (2) 'size' for cluster size, (3) 'distance' (in km) for perpendicular distance of sighting from the transect line, and (4) 'Effort' for segment length (in km).
 #' @param segdata Dataframe object with at least 3 columns: (1) 'Transect.Label' (i.e. label for transects), (2) 'Sample.Label' (i.e. label for segments), and (3) 'Effort' for segment length (in km). It may also contain additional columns with relevant habitat covariates specific to each segment that will be fed into the spatial model.
 #' @param grid Grid used for model prediction. Column names for habitat covriates should correspond to those in 'segdata'.
-#' @param w.pa Presence-absence submodel variant weights obtained from dshm_fit$info$weights.pa.
-#' @param w.ab Weights for submodel variants for abundance conditional on presence obtained from dshm_fit$info$weights.ab.
-#' @param ID.pa IDs for best presence-absence submodel variants obtained from dshm_fit$models$pa.
-#' @param ID.ab IDs for best submodel variants for abundance conditional on presence obtained from dshm_fit$models$ab.
-#' @param knots.pa List of knot gam knot positions for each smooth term of the fitted binomial models.
-#' @param knots.ab List of knot gam knot positions for each smooth term of the fitted zero-truncated Poisson models.
+#' @param model_fit Model fitted with the function 'dshm_fit'.
 #' @param group If TRUE group abundance is estimated (i.e. 'size' = 1).
 #' @param nsim Number of simulations,
 #' @param parallel If TRUE the simulations are performed on multiple cpus. Default is FALSE.
@@ -25,7 +18,7 @@
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
 #' @export
-dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, method = "GCV.Cp", lim = 0.1, distdata, obsdata, segdata, grid, w.pa, w.ab, ID.pa, ID.ab, knots.pa, knots.ab, group=FALSE, nsim, parallel = FALSE, ncores = NULL, mute = TRUE, stratification="transect") {
+dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, distdata, obsdata, segdata, model_fit, grid, group=FALSE, nsim, parallel = FALSE, ncores = NULL, mute = TRUE, stratification="none") {
 
     # Defining resampling indices (sampling with replacement)----
     ids <- list()  #empty list
@@ -67,7 +60,7 @@ dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, method = 
 
         `%dopar%` <- foreach::`%dopar%`
         data.array <- foreach::foreach(i = 1:nsim, .combine = cbind) %dopar% {
-            possibleError <- tryCatch({mod <- dshm_fit_4boot(det.fn.par, effects.pa,effects.ab, method, lim, distdata, obsdata, segdata, grid, w.pa, w.ab, ID.pa, ID.ab, knots.pa, knots.ab, group, indices = ids[[i]],stratification)}, error = function(e) e,warning=function(w) w)
+            possibleError <- tryCatch({mod <- dshm_fit_4boot(det.fn.par, effects.pa,effects.ab, method = model_fit$info$method, lim = model_fit$info$lim, distdata, obsdata, segdata, grid, w.pa = model_fit$info$weights.pa, w.ab = model_fit$info$weights.ab, ID.pa = model_fit$info$ID.pa, ID.ab = model_fit$info$ID.ab, knots.pa = model_fit$info$k.loc.pa, knots.ab = model_fit$info$k.loc.ab, group, indices = ids[[i]],stratification)}, error = function(e) e,warning=function(w) w)
             if (inherits(possibleError, "error")|inherits(possibleError, "warning")) {
                 return("Fitting error")
             }
@@ -87,7 +80,7 @@ dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, method = 
         pb <- utils::txtProgressBar(min = 0, max = nsim, style = 3)  #adding a progress bar (only possible without parallelization)
         data.array <- foreach::foreach(i = 1:nsim, .combine = cbind) %do% {
             utils::setTxtProgressBar(pb, i)
-            possibleError <- tryCatch({mod <- dshm_fit_4boot(det.fn.par, effects.pa,effects.ab, method, lim, distdata, obsdata, segdata, grid, w.pa, w.ab, ID.pa, ID.ab, knots.pa, knots.ab, group, indices = ids[[i]],stratification)}, error = function(e) e,warning=function(w) w)
+            possibleError <- tryCatch({mod <- dshm_fit_4boot(det.fn.par, effects.pa,effects.ab, method = model_fit$info$method, lim = model_fit$info$lim, distdata, obsdata, segdata, grid, w.pa = model_fit$info$weights.pa, w.ab = model_fit$info$weights.ab, ID.pa = model_fit$info$ID.pa, ID.ab = model_fit$info$ID.ab, knots.pa = model_fit$info$k.loc.pa, knots.ab = model_fit$info$k.loc.ab, group, indices = ids[[i]],stratification)}, error = function(e) e,warning=function(w) w)
             if (inherits(possibleError, "error")|inherits(possibleError, "warning")) {
                 return("Fitting error")
             }
