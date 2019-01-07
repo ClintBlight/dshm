@@ -72,6 +72,7 @@ dshm_fit <- function(det.fn, effects.pa = NULL,effects.ab = NULL,knots.pa=NULL ,
 
     mod.sel.pa <- data.frame(mod.sel.pa, deltaAICc = mod.sel.pa$AICc - min(mod.sel.pa$AICc), weights = round(MuMIn::Weights(mod.sel.pa$AICc),
         3))  #adding delta AICc and AIC weights to the model selection table
+    exdev.pa <- mod.sel.pa$expl_Dev
     w.pa <- mod.sel.pa$weights
     k.pa <- mod.sel.pa$k
     mod.sel.pa <- mod.sel.pa[order(mod.sel.pa$deltaAICc), ]  #order the model selection table according to increasing delta AICc
@@ -142,7 +143,7 @@ dshm_fit <- function(det.fn, effects.pa = NULL,effects.ab = NULL,knots.pa=NULL ,
 
     mod.sel.ab <- data.frame(mod.sel.ab, deltaAICc = mod.sel.ab$AICc - min(mod.sel.ab$AICc), weights = round(MuMIn::Weights(mod.sel.ab$AICc),
         3))  #adding delta AICc and AIC weights to the model selection table
-    exdev <- mod.sel.ab$expl_Dev
+    exdev.ab <- mod.sel.ab$expl_Dev
     w.ab <- mod.sel.ab$weights
     k.ab <- mod.sel.ab$k
     mod.sel.ab <- mod.sel.ab[order(mod.sel.ab$deltaAICc), ]  #order the model selection table according to increasing delta AICc
@@ -199,6 +200,15 @@ dshm_fit <- function(det.fn, effects.pa = NULL,effects.ab = NULL,knots.pa=NULL ,
         print(best.ab)  #print list with best models
     }
 
-    return(list(models=list(pa=mod.list.pa,ab=mod.list.ab),info=list(ID.pa=ID.pa,k.pa=k.pa,weights.pa=w.pa,edfs.pa=edf.pa.list,ID.ab=ID.ab,k.ab=k.ab,weights.ab=w.ab,edfs.ab=edf.ab.list,k.loc.pa=knots.pa.list,k.loc.ab=knots.ab.list,exdev=exdev),grid_data=list(pa = grid.w.pa, ab = grid.w.ab, H = grid.H),fitted=list(pa=fit.w.pa,ab.full=fit.w.ab.full,ab=fit.w.ab),obs=ab.full,residuals=res.H))
+    return(list(models=list(pa=mod.list.pa,ab=mod.list.ab),
+                info=list(ID.pa=ID.pa,k.pa=k.pa,weights.pa=w.pa,
+                          edfs.pa=edf.pa.list,ID.ab=ID.ab,k.ab=k.ab,
+                          weights.ab=w.ab,edfs.ab=edf.ab.list,
+                          k.loc.pa=knots.pa.list,k.loc.ab=knots.ab.list,
+                          exdev.pa=exdev.pa,exdev.ab=exdev.ab,method=method,lim=lim),
+                grid_data=list(pa = grid.w.pa, ab = grid.w.ab, H = grid.H),
+                fitted=list(pa=fit.w.pa,ab.full=fit.w.ab.full,ab=fit.w.ab),
+                obs=ab.full,
+                residuals=res.H))
 
 }
