@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   dpi=300
 )
 
-#devtools::use_data(transects,segments,segments_2km,segments_2km_1s,segments_2km_par,segments_2km_par_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final_all,cor_seg_final,empty_grid,grid_final_all,grid_final,overwrite=TRUE)
+#devtools::use_data(transects,segments,segments_2km,segments_2km_1s,segments_2km_par,segments_2km_par_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final_all,cor_seg_final,strata,empty_grid,grid_final_all,grid_final,obsdata,mod_hr,H_m,overwrite=TRUE)
 
 load("/Users/User/Desktop/dshm/data/segments.rda")
 load("/Users/User/Desktop/dshm/data/segments_2km_par_nocap.rda")
@@ -32,6 +32,7 @@ load("/Users/User/Desktop/dshm/data/DR_crop.rda")
 load("/Users/User/Desktop/dshm/data/land_crop.rda")
 load("/Users/User/Desktop/dshm/data/cor_seg_final.rda")
 load("/Users/User/Desktop/dshm/data/cor_seg_final_all.rda")
+load("/Users/User/Desktop/dshm/data/strata.rda")
 ```
 
 ##Summary
@@ -261,11 +262,22 @@ One segment was deleted in the process:
 raster::plot(cor_seg_final,lwd=3)
 ```
 
+If you have information about strata, you can add Region.Label (i.e. ID for the stratum where the segment is located) as follows:
+
+    seg_region <- sp::over(cor_seg_final,strata)$ID
+    cor_seg_final@data <- data.frame(Region.Label = seg_region, cor_seg_final@data)
+    
+This will add a column for stratum ID to the segment data:
+
+```{r, echo=FALSE, results='asis',fig.height=6,fig.width=6}
+knitr::kable(head(cor_seg_final@data,6))
+```
+
 ## Save Segments as Shapefile
 
 You can easily save the segments as a shapefile (i.e. .shp) so that you can import them in other GIS software such as ArcGIS or QGIS. As a first step you have to abbreviate all column descripions:
 
-    names(cor_seg_final)<-c("TL","SL","L","A","DR","DC","D")
+    names(cor_seg_final)<-c("RL","TL","SL","L","A","DR","DC","D")
     
 Then you can run the following code:
 
