@@ -5,7 +5,7 @@
 \title{Splits transect lines into segments and adds buffer as well as metadata}
 \usage{
 dshm_split_transects(transect.data, inter.dist, lwr, search.time, w,
-  parallel = FALSE, ncores = NULL, cap)
+  parallel = FALSE, ncores = NULL, cap = TRUE)
 }
 \arguments{
 \item{transect.data}{Transect lines as SpatialLinesDataFrame.}

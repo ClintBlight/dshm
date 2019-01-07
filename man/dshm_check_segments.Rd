@@ -4,12 +4,10 @@
 \alias{dshm_check_segments}
 \title{Check if there are overlapping features between SpatialPolygons}
 \usage{
-dshm_check_segments(data, plot = FALSE)
+dshm_check_segments(data)
 }
 \arguments{
 \item{data}{Segments or other datasets containing polygons as SpatialPolygonsDataFrame.}
-
-\item{plot}{If TRUE segments are plotted with overlapping features highlighted in red. Default is FALSE.}
 }
 \value{
 Nothing. It tells if there are intersecting polygons and how many are they. In case of match, it stores in the Global Environent a list 'int.ids' containing the ids of all intersecting polygons. This is used by 'dshm_correct_segments'.

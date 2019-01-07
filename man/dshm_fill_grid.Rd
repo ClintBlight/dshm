@@ -4,8 +4,7 @@
 \alias{dshm_fill_grid}
 \title{Corrects grid shapefile for land and calculates covariate statistics within each grid cell}
 \usage{
-dshm_fill_grid(empty.grid, land.data, cov, fun, ncores, saveRaster = FALSE,
-  names_simplfied, file_name, save.directory = NULL)
+dshm_fill_grid(empty.grid, land.data = NULL, cov, fun, ncores = 2)
 }
 \arguments{
 \item{empty.grid}{Empty grid shapefile.}
@@ -17,14 +16,6 @@ dshm_fill_grid(empty.grid, land.data, cov, fun, ncores, saveRaster = FALSE,
 \item{fun}{Function for covariate statistcs within each cell (i.e. mean or median).}
 
 \item{ncores}{Number of cores (this function is run in parallel only).}
-
-\item{saveRaster}{If TRUE the corrected and filled grid is saved as a shapefile. Default is FALSE.}
-
-\item{names_simplfied}{A vector of simplified names for each covariate. Long names might produce problems when saving the grid as a shapefile.}
-
-\item{file_name}{Name of the saved grid.}
-
-\item{save.directory}{Directory where the grid shapefile has to be placed.}
 }
 \description{
 Corrects grid shapefile for land and calculates covariate statistics within each grid cell

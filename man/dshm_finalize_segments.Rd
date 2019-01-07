@@ -4,7 +4,7 @@
 \alias{dshm_finalize_segments}
 \title{Corrects segment shapefile for land and calculates covariate statistics for each segement.}
 \usage{
-dshm_finalize_segments(segment.data, land.data, covariates, fun,
+dshm_finalize_segments(segment.data, land.data = NULL, covariates, fun,
   parallel = FALSE, ncores = NULL)
 }
 \arguments{

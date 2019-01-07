@@ -4,22 +4,16 @@
 \alias{dshm_boot}
 \title{Non-parametric bootstrap for Hurdle model uncertainty}
 \usage{
-dshm_boot(det.fn.par, effects.pa = NULL, effects.ab = NULL,
-  method = "GCV.Cp", lim = 0.1, distdata, obsdata, segdata, grid, w.pa,
-  w.ab, ID.pa, ID.ab, knots.pa, knots.ab, group = FALSE, nsim,
-  parallel = FALSE, ncores = NULL, mute = TRUE,
-  stratification = "transect")
+dshm_boot(det.fn.par, effects.pa = NULL, effects.ab = NULL, distdata,
+  obsdata, segdata, model_fit, grid, group = FALSE, nsim, parallel = FALSE,
+  ncores = NULL, mute = TRUE, stratification = "none")
 }
 \arguments{
-\item{det.fn.par}{Detection function parameters. For strucuture see the documentation for the 'ds' package.}
+\item{det.fn.par}{List of detection function parameters. For strucuture see the documentation for the 'ds' package.}
 
 \item{effects.pa}{List of characters defining the binomial gam models to be fitted. For model structure see \code{\link[mgcv]{gam}}.}
 
 \item{effects.ab}{List of characters defining the zero-truncated Poisson gam models to be fitted. For model structure see \code{\link[mgcv]{gam}}.}
-
-\item{method}{Character. Fitting method for gam as in the 'mgcv' package. Note that 'REML' is not available since it is not campatible with the zero-truncated poisson in the 'countreg' package. Default is 'GCV.Cp'.}
-
-\item{lim}{AIC weight (AICw) threshold for model averaging. Models with AICw < lim are not averaged. Default is 0.1.}
 
 \item{distdata}{Dataframe for distance sampling observations. For strucuture see the documentation for the 'ds' package.}
 
@@ -27,19 +21,9 @@ dshm_boot(det.fn.par, effects.pa = NULL, effects.ab = NULL,
 
 \item{segdata}{Dataframe object with at least 3 columns: (1) 'Transect.Label' (i.e. label for transects), (2) 'Sample.Label' (i.e. label for segments), and (3) 'Effort' for segment length (in km). It may also contain additional columns with relevant habitat covariates specific to each segment that will be fed into the spatial model.}
 
+\item{model_fit}{Model fitted with the function 'dshm_fit'.}
+
 \item{grid}{Grid used for model prediction. Column names for habitat covriates should correspond to those in 'segdata'.}
-
-\item{w.pa}{Presence-absence submodel variant weights obtained from dshm_fit$info$weights.pa.}
-
-\item{w.ab}{Weights for submodel variants for abundance conditional on presence obtained from dshm_fit$info$weights.ab.}
-
-\item{ID.pa}{IDs for best presence-absence submodel variants obtained from dshm_fit$models$pa.}
-
-\item{ID.ab}{IDs for best submodel variants for abundance conditional on presence obtained from dshm_fit$models$ab.}
-
-\item{knots.pa}{List of knot gam knot positions for each smooth term of the fitted binomial models.}
-
-\item{knots.ab}{List of knot gam knot positions for each smooth term of the fitted zero-truncated Poisson models.}
 
 \item{group}{If TRUE group abundance is estimated (i.e. 'size' = 1).}
 
