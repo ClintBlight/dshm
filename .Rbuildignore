@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^packrat/
 ^\.Rprofile$
+^local_repository$
+^vignette_data$
+^Important_author_notes$
