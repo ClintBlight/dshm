@@ -40,7 +40,7 @@ dshm_plot <- function(prediction, grid, probability = FALSE, sightings = NULL, p
     }
 
 
-    dev.new(width = 7, height = 6)
+    grDevices::dev.new(width = 7, height = 6)
     if (!is.null(scale_lim)) {
         max <- max(scale_lim)
     } else {
