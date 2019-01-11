@@ -4,20 +4,23 @@
 \name{obsdata}
 \alias{obsdata}
 \title{Observation data}
-\format{A data frame with 53940 rows and 10 variables:
+\format{A data frame with 16 rows and 10 variables:
 \describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
-  ...
+  \item{Region.Label}{ID for stratum}
+  \item{Area}{Stratum area in km2}
+  \item{Transect.Label}{ID for transect}
+  \item{Sample.Label}{ID for segment}
+  \item{Latitude}{Segment centroid latitude}
+  \item{Longitude}{Segment centroid longitude}
+  \item{distance}{Sighting perpendicular distance from the transect line}
+  \item{size}{Number of dolphin}
+  \item{object}{Sighting ID}
+  \item{detected}{Required for \code{\link[Distance]{ds}} function}
 }}
-\source{
-\url{http://www.diamondse.info/}
-}
 \usage{
 obsdata
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+A dataset containing relevant information for dolphin sightings.
 }
 \keyword{datasets}

@@ -4,20 +4,11 @@
 \name{transects}
 \alias{transects}
 \title{Transects}
-\format{A data frame with 53940 rows and 10 variables:
-\describe{
-  \item{price}{price, in US dollars}
-  \item{carat}{weight of the diamond, in carats}
-  ...
-}}
-\source{
-\url{http://www.diamondse.info/}
-}
+\format{A SpatialLinesDataFrame with 15 features (i.e. lines). Associated data are not important.}
 \usage{
 transects
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+Transect lines covered by a boad during a dolphin survey.
 }
 \keyword{datasets}
