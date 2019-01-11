@@ -44,10 +44,10 @@ dshm_diagnostics<-function(model,mute=FALSE,plot=TRUE,plot.n=1){
       graphics::lines(c(-1,2),c(-1,2))
     } else if (plot.n==2){
       graphics::par(mfrow=c(1,2))
-      plot(CDF,EDF,pch=19,col=grDevices::rgb(0,0,0,0.5),cex=1,main="Q-Q Plot")
-      lines(c(-1,2),c(-1,2))
+      graphics::plot(CDF,EDF,pch=19,col=grDevices::rgb(0,0,0,0.5),cex=1,main="Q-Q Plot")
+      graphics::lines(c(-1,2),c(-1,2))
       max.val<-max(fit.pa*fit.ab,obs)
-      plot(fit.pa*fit.ab,obs,ylab="Response",xlab="Fitted Values",main="Response vs. Fitted Values",pch=19,col=grDevices::rgb(0,0,0,0.5),ylim=c(0,max.val),xlim=c(0,max.val))
+      graphics::plot(fit.pa*fit.ab,obs,ylab="Response",xlab="Fitted Values",main="Response vs. Fitted Values",pch=19,col=grDevices::rgb(0,0,0,0.5),ylim=c(0,max.val),xlim=c(0,max.val))
       graphics::lines(c(-100,100),c(-100,100))
     }
   }
