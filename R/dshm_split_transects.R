@@ -40,11 +40,11 @@ dshm_split_transects<-function(transect.data,inter.dist,lwr,search.time,w,parall
     segments.bind<-do.call(raster::bind, segments) #binding all the segments together in one object
   } else { #non-parallel execution
     `%do%` <- foreach::`%do%`
-    pb <- txtProgressBar(min = 0, max = length(transect.data), style = 3) #setting progress bar (not available for parallel)
+    pb <- utils::txtProgressBar(min = 0, max = length(transect.data), style = 3) #setting progress bar (not available for parallel)
 
     segments<-foreach::foreach(i=1:length(transect.data)) %do% { #running the 'dshm_split_segments'
       ext<-dshm_split_transect(transect.data[i,],inter.dist,lwr,search.time,w,cap=cap)
-      setTxtProgressBar(pb, i) #updating progress bar at each iteration
+      utils::setTxtProgressBar(pb, i) #updating progress bar at each iteration
       return(ext) #returning segments
     }
 

@@ -48,7 +48,7 @@ dshm_finalize_segments<-function(segment.data,land.data = NULL,covariates,fun,pa
     segments.bind<-do.call(raster::bind, segments) #binding all the segments together in one object
   } else { #non-parallel execution
     `%do%` <- foreach::`%do%`
-    pb <- txtProgressBar(min = 0, max = length(segment.data), style = 3) #setting progress bar (not available for parallel)
+    pb <- utils::txtProgressBar(min = 0, max = length(segment.data), style = 3) #setting progress bar (not available for parallel)
 
     segments<-foreach::foreach(j=1:length(segment.data)) %do% { #running the 'dshm_split_segments'
       if (!is.null(land.data)) {
@@ -64,7 +64,7 @@ dshm_finalize_segments<-function(segment.data,land.data = NULL,covariates,fun,pa
         ext@data[,i+4]<-raster::extract(covariates[[i]],ext,fun=fun,na.rm=TRUE)[1]
         colnames(ext@data)[i+4]<-paste(names(covariates)[i])
       }
-      setTxtProgressBar(pb, j) #updating progress bar at each iteration
+      utils::setTxtProgressBar(pb, j) #updating progress bar at each iteration
       return(ext) #returning segments
     }
 
