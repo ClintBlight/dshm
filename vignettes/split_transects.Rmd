@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   dpi=300
 )
 
-#devtools::use_data(transects,segments,segments_2km,segments_2km_1s,segments_2km_par,segments_2km_par_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final_all,cor_seg_final,strata,empty_grid,grid_final_all,grid_final,obsdata,mod_hr,H_m,overwrite=TRUE)
+#devtools::use_data(transects,segments,segments_2km,segments_2km_1s,segments_2km_par,segments_2km_par_nocap,intersections,cor_seg,depth_crop,DC_crop,DR_crop,land_crop,cor_seg_final_all,cor_seg_final,strata,empty_grid,grid_final_all,grid_final,obsdata,mod_hr,H_m,pred,pred_lwr,pred_upr,overwrite=TRUE)
 
 load("/Users/User/Desktop/dshm/data/segments.rda")
 load("/Users/User/Desktop/dshm/data/segments_2km_par_nocap.rda")
