@@ -1,23 +1,24 @@
 #' Plots prediction grid and saves it as a raster image
 #'
 #' @param prediction Prediction grid returned by dshm_fit$grid_data.
-#' @param species Character. Species name (used for plotting and saving the raster).
 #' @param grid Grid shapefile (SpatialPolygonsDataFrame object) with specific projection.
-#' @param map_type Character. Type of map to plot: 'presence_absence', 'abundance', 'Hurdle', or 'SD'.
+#' @param probability If TRUE colour label is Pr(Presence), if FALSE is Abundance. Default is FALSE.
 #' @param sightings Dataframe with at least three columns: 'x' and 'y' coordinates and 'size' for loaction and size of each sighitng, respectively.
+#' @param plot_title Title of the plot.
 #' @param scale_col Vector with colour scale values. Length should correspond to the length of 'scale_val'.
 #' @param scale_lim Vector for lower and upper limits of the colour scale.
 #' @param scale_val Vector for the scale values corresponding to colour transition as defined in 'scale_col'.
 #' @param cex Size of the pixels in the map (visualization purpose only, for true scaled spatial map save as raster).
 #' @param saveRaster If TRUE the map is saved as a raster file. A grid shapefile with projection is needed. Default is FALSE.
+#' @param raster_name Name of the saved raster as string.
 #' @return Map and raster. Raster name contains information in 'map_type' and 'species'.
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
 #' @export
-dshm_plot <- function(prediction, species = NULL, grid, map_type = "Hurdle", sightings = NULL,scale_col = c("blue", "yellow",
-    "red"), scale_lim = NULL, scale_val = NULL, cex = 1, saveRaster = FALSE) {
+dshm_plot <- function(prediction, grid, probability = FALSE, sightings = NULL, plot_title = NULL, scale_col = c("blue", "yellow",
+    "red"), scale_lim = NULL, scale_val = NULL, cex = 1, saveRaster = FALSE, raster_name = NULL) {
 
-    if (map_type == "presence_absence") {
+    if (probability) {
         lab = "Pr(presence)"
     } else {
         lab = "Abundance"
@@ -35,7 +36,7 @@ dshm_plot <- function(prediction, species = NULL, grid, map_type = "Hurdle", sig
         raster::extent(r) <- raster::extent(grid)
 
         ras <- raster::rasterize(GRID.pred, r, "P")
-        raster::writeRaster(ras, paste(map_type,species), format = "GTiff", overwrite = TRUE)
+        raster::writeRaster(ras, paste(raster_name), format = "GTiff", overwrite = TRUE)
     }
 
 
@@ -54,7 +55,7 @@ dshm_plot <- function(prediction, species = NULL, grid, map_type = "Hurdle", sig
         limits = scale_lim/max
     }, values = if (!is.null(scale_val)) {
         values = scale_val/max
-    }, breaks=breaks, labels = round(max*breaks,2)) + ggplot2::labs(title = paste(map_type,species), x = "x coord", y= "y coord", colour = lab)
+    }, breaks=breaks, labels = round(max*breaks,2)) + ggplot2::labs(title = paste(plot_title), x = "x coord", y= "y coord", colour = lab)
 
     if (!is.null(sightings)) {
         plot_map + ggplot2::geom_point(data = sightings, ggplot2::aes(x = sightings$x, y = sightings$y, size = sightings$size)) + ggplot2::scale_size_continuous(range = c(1,
