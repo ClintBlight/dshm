@@ -4,7 +4,7 @@
 \alias{dshm_spatial_correlation}
 \title{Calculates spatial correlation for dshm}
 \usage{
-dshm_spatial_correlation(coord, z, xlab, ylab)
+dshm_spatial_correlation(coord, z, xlab, ylab, lims)
 }
 \arguments{
 \item{coord}{Centroids of each segment.}
@@ -14,6 +14,8 @@ dshm_spatial_correlation(coord, z, xlab, ylab)
 \item{xlab}{Label for x-axis.}
 
 \item{ylab}{Label for y-axis.}
+
+\item{lims}{A vector of minimum and maximum correlation values.}
 }
 \description{
 Calculates spatial correlation for dshm

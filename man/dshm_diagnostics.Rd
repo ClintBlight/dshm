@@ -4,15 +4,10 @@
 \alias{dshm_diagnostics}
 \title{Computes CDF and plots CDF vs. EDF relationship for dshm objects}
 \usage{
-dshm_diagnostics(fit.pa, fit.ab, obs, mute = FALSE, plot = TRUE,
-  plot.n = 1)
+dshm_diagnostics(model, mute = FALSE, plot = TRUE, plot.n = 1)
 }
 \arguments{
-\item{fit.pa}{Fitted values from binomial submodel}
-
-\item{fit.ab}{Fitted values from zero-truncated Poisson submodel}
-
-\item{obs}{Observation (same length as fit.pa and fit.ab)}
+\item{model}{Fitted Hurdle model}
 
 \item{mute}{If TRUE returns p-value and test statistics for Kolmogorov-Smirnov test. Default is FALSE.}
 

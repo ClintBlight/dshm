@@ -4,23 +4,21 @@
 \alias{dshm_plot}
 \title{Plots prediction grid and saves it as a raster image}
 \usage{
-dshm_plot(prediction, species = NULL, grid, map_type = "Hurdle",
-  sightings = FALSE, sightingData, scale_col = c("blue", "yellow", "red"),
+dshm_plot(prediction, grid, probability = FALSE, sightings = NULL,
+  plot_title = NULL, scale_col = c("blue", "yellow", "red"),
   scale_lim = NULL, scale_val = NULL, cex = 1, saveRaster = FALSE,
-  grid.shp)
+  raster_name = NULL)
 }
 \arguments{
 \item{prediction}{Prediction grid returned by dshm_fit$grid_data.}
 
-\item{species}{Character. Species name (used for plotting and saving the raster).}
+\item{grid}{Grid shapefile (SpatialPolygonsDataFrame object) with specific projection.}
 
-\item{grid}{Grid used for model prediction. Column names for habitat covriates should correspond to those in 'segdata'.}
+\item{probability}{If TRUE colour label is Pr(Presence), if FALSE is Abundance. Default is FALSE.}
 
-\item{map_type}{Character. Type of map to plot: 'presence_absence', 'abundance', 'Hurdle', or 'SD'.}
+\item{sightings}{Dataframe with at least three columns: 'x' and 'y' coordinates and 'size' for loaction and size of each sighitng, respectively.}
 
-\item{sightings}{If TRUE, sightings are plotted in the map. Default is FALSE.}
-
-\item{sightingData}{Dataframe with at least three columns: 'x' and 'y' coordinates and 'size' for loaction and size of each sighitng, respectively.}
+\item{plot_title}{Title of the plot.}
 
 \item{scale_col}{Vector with colour scale values. Length should correspond to the length of 'scale_val'.}
 
@@ -32,7 +30,7 @@ dshm_plot(prediction, species = NULL, grid, map_type = "Hurdle",
 
 \item{saveRaster}{If TRUE the map is saved as a raster file. A grid shapefile with projection is needed. Default is FALSE.}
 
-\item{grid.shp}{Grid shapefile (SpatialPolygonsDataFrame object) with specific projection.}
+\item{raster_name}{Name of the saved raster as string.}
 }
 \value{
 Map and raster. Raster name contains information in 'map_type' and 'species'.
