@@ -224,7 +224,7 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
   mod.sel.pa <- mod.sel.pa[order(mod.sel.pa$deltaAICc), ]  #order the model selection table according to increasing delta AICc
 
   best.pa <- list()  #empty list for the best models in the model selection table
-  sub.pa <- subset(mod.sel.pa, w >= lim)  #taking the models which have a delta AIC less or equal to 4
+  sub.pa <- subset(mod.sel.pa, mod.sel.pa$w >= lim)  #taking the models which have a delta AIC less or equal to 4
 
   if (length(ID.pa) > 1) {
     # conditional part that decides to average models if there are more than one model in the list with the best models
@@ -274,7 +274,7 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
   mod.sel.ab <- mod.sel.ab[order(mod.sel.ab$deltaAICc), ]  #order the model selection table according to increasing delta AICc
 
   best.ab <- list()  #empty list for the best models in the model selection table
-  sub.ab <- subset(mod.sel.ab, w >= lim)  #taking the models which have a delta AIC less or equal to 4
+  sub.ab <- subset(mod.sel.ab, mod.sel.ab$w >= lim)  #taking the models which have a delta AIC less or equal to 4
   if (length(ID.ab) > 1) {
     # conditional part that decides to average models if there are more than one model in the list with the best models
     eval.ab <- array(0, dim = c(length(data.ab[, 1]), 1, length(ID.ab)))  #specifying the array with number of rows equal to the length of the presence-only abundance dataset, 1 column, and dimensions equal to the number of models in the list with the best models

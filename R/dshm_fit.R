@@ -78,7 +78,7 @@ dshm_fit <- function(det.fn, effects.pa = NULL,effects.ab = NULL,knots.pa=NULL ,
     mod.sel.pa <- mod.sel.pa[order(mod.sel.pa$deltaAICc), ]  #order the model selection table according to increasing delta AICc
 
     best.pa <- list()  #empty list for the best models in the model selection table
-    sub.pa <- subset(mod.sel.pa, w >= lim)  #taking the models which have a delta AIC less or equal to 4
+    sub.pa <- subset(mod.sel.pa, mod.sel.pa$w >= lim)  #taking the models which have a delta AIC less or equal to 4
     ID.pa <- as.integer(rownames(sub.pa))  #extracting the row IDs for each of the best models
 
     if (length(ID.pa) > 1) {
@@ -149,7 +149,7 @@ dshm_fit <- function(det.fn, effects.pa = NULL,effects.ab = NULL,knots.pa=NULL ,
     mod.sel.ab <- mod.sel.ab[order(mod.sel.ab$deltaAICc), ]  #order the model selection table according to increasing delta AICc
 
     best.ab <- list()  #empty list for the best models in the model selection table
-    sub.ab <- subset(mod.sel.ab, w >= lim)  #taking the models which have a delta AIC less or equal to 4
+    sub.ab <- subset(mod.sel.ab, mod.sel.ab$w >= lim)  #taking the models which have a delta AIC less or equal to 4
     ID.ab <- as.integer(rownames(sub.ab))  #extracting the row IDs for each of the best models
 
     if (length(ID.ab) > 1) {
