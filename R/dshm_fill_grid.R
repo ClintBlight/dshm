@@ -85,7 +85,7 @@ dshm_fill_grid<-function(empty.grid,land.data = NULL,cov,fun,ncores = 2){
     na.id$na[i]<-sum(is.na(grid.cor@data)[i,])
   }
 
-  grid.cor.nona<-grid.cor[subset(na.id,na==0)$id,]
+  grid.cor.nona<-grid.cor[subset(na.id,na.id$na==0)$id,]
   grid.cor.nona@data<-data.frame(id=c(1:length(grid.cor.nona)),grid.cor.nona@data)
   rownames(grid.cor.nona@data)<-NULL
 
