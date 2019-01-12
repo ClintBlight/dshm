@@ -109,7 +109,7 @@ dshm_prep <- function(det.fn, obsdata, segdata, group=FALSE, strip.width=NULL) {
     obsdata$p<-1
     w<-strip.width
   } else {
-    obsdata$p <- predict(det.fn$ddf, newdata = obsdata)$fitted  #predicting p
+    obsdata$p <- stats::predict(det.fn$ddf, newdata = obsdata)$fitted  #predicting p
     w <- summary(det.fn)$ddf$meta.data$width  #extracting strip width from ddf object
   }
 
@@ -209,22 +209,22 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
 
     eq <- paste("pa~", effects.pa[i],"+offset(log(area))")  #specifying the equations for the single main effects, the switch function allows for changing the covariates within the loop framework
 
-    gam.pa <- mgcv::gam(as.formula(eq), family = binomial(link = "logit"), data = data, method = method,knots = knots.pa[[i]])  #fitting the gam according to the specified equations
+    gam.pa <- mgcv::gam(stats::as.formula(eq), family = stats::binomial(link = "logit"), data = data, method = method,knots = knots.pa[[i]])  #fitting the gam according to the specified equations
 
     mod.list.pa[[i]] <- gam.pa  #storing each of the fitted model in the empty list specified before
 
     mod.sel.pa[i, 2] <- round(((gam.pa$null.deviance - gam.pa$deviance)/gam.pa$null.deviance) * 100, 2)  #calculating the % of deviance explained by each model
-    mod.sel.pa[i, 3] <- round((1 - pchisq(gam.pa$deviance, gam.pa$df.residual)), 2)  #Chi-squared statistics (GOF)
-    mod.sel.pa[i, 4] <- round(logLik(gam.pa)[1], 3)  #log-likelihood
+    mod.sel.pa[i, 3] <- round((1 - stats::pchisq(gam.pa$deviance, gam.pa$df.residual)), 2)  #Chi-squared statistics (GOF)
+    mod.sel.pa[i, 4] <- round(stats::logLik(gam.pa)[1], 3)  #log-likelihood
     mod.sel.pa[i, 5] <- MuMIn::AICc(gam.pa)  #AICc
   }
 
-  mod.sel.pa <- data.frame(mod.sel.pa, deltaAICc = mod.sel.pa$AICc - min(mod.sel.pa$AICc), weights = round(MuMIn::Weights(mod.sel.pa$AICc),
+  mod.sel.pa <- data.frame(mod.sel.pa, deltaAICc = mod.sel.pa$AICc - min(mod.sel.pa$AICc), w = round(MuMIn::Weights(mod.sel.pa$AICc),
                                                                                                            3))  #adding delta AICc and AIC weights to the model selection table
   mod.sel.pa <- mod.sel.pa[order(mod.sel.pa$deltaAICc), ]  #order the model selection table according to increasing delta AICc
 
   best.pa <- list()  #empty list for the best models in the model selection table
-  sub.pa <- subset(mod.sel.pa, weights >= lim)  #taking the models which have a delta AIC less or equal to 4
+  sub.pa <- subset(mod.sel.pa, w >= lim)  #taking the models which have a delta AIC less or equal to 4
 
   if (length(ID.pa) > 1) {
     # conditional part that decides to average models if there are more than one model in the list with the best models
@@ -234,16 +234,16 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
       # loop going through all models in the list, extracting the fitted values, multiplying them by each model weight, and storing
       # the resulting vectors into the array
       best.pa[i] <- mod.list.pa[ID.pa[i]]
-      eval.pa[, , i] <- predict(mod.list.pa[[ID.pa[i]]], newdata = data, type = "response") * (w.pa[ID.pa[i]]/sum(w.pa[ID.pa]))  #multiplying fitted values by weights
-      grid.pa[, , i] <- predict(mod.list.pa[[ID.pa[i]]], newdata = grid, type = "response") * (w.pa[ID.pa[i]]/sum(w.pa[ID.pa]))
+      eval.pa[, , i] <- stats::predict(mod.list.pa[[ID.pa[i]]], newdata = data, type = "response") * (w.pa[ID.pa[i]]/sum(w.pa[ID.pa]))  #multiplying fitted values by weights
+      grid.pa[, , i] <- stats::predict(mod.list.pa[[ID.pa[i]]], newdata = grid, type = "response") * (w.pa[ID.pa[i]]/sum(w.pa[ID.pa]))
     }
     fit.w.pa <- apply(eval.pa, 1, sum)  #sum across the array dimension to get final averaged fitted values
     grid.w.pa <- apply(grid.pa, 1, sum)
   } else {
     # conditional part if there is only one model in the list, no averaging
     best.pa <- mod.list.pa[ID.pa[1]]
-    fit.w.pa <- predict(mod.list.pa[[ID.pa[1]]], newdata = data, type = "response")  #taking fitted values of the model
-    grid.w.pa <- predict(mod.list.pa[[ID.pa[1]]], newdata = grid, type = "response")
+    fit.w.pa <- stats::predict(mod.list.pa[[ID.pa[1]]], newdata = data, type = "response")  #taking fitted values of the model
+    grid.w.pa <- stats::predict(mod.list.pa[[ID.pa[1]]], newdata = grid, type = "response")
   }  #end of conditional part
 
   # HURDLE MODEL - abundance----
@@ -259,22 +259,22 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
     # this loop fits gam for each of the specifyied combinations allowing for different distributions and k
 
     eq <- paste("ab~", effects.ab[i],"+offset(log(phat*area))")  #specifying the equations for the single main effects, the switch function allows for changing the covariates within the loop framework
-    gam.ab <- mgcv::gam(as.formula(eq), family = countreg::ztpoisson(), data = data.ab, method = method,knots = knots.ab[[i]])  #fitting the gam according to the specified equations
+    gam.ab <- mgcv::gam(stats::as.formula(eq), family = countreg::ztpoisson(), data = data.ab, method = method,knots = knots.ab[[i]])  #fitting the gam according to the specified equations
 
     mod.list.ab[[i]] <- gam.ab  #storing each of the fitted model in the empty list specified before
 
     mod.sel.ab[i, 2] <- round(((gam.ab$null.deviance - gam.ab$deviance)/gam.ab$null.deviance) * 100, 2)  #calculating the % of deviance explained by each model
-    mod.sel.ab[i, 3] <- round((1 - pchisq(gam.ab$deviance, gam.ab$df.residual)), 2)  #Chi-squared statistics (GOF)
-    mod.sel.ab[i, 4] <- round(logLik(gam.ab)[1], 2)  #log-likelihood
+    mod.sel.ab[i, 3] <- round((1 - stats::pchisq(gam.ab$deviance, gam.ab$df.residual)), 2)  #Chi-squared statistics (GOF)
+    mod.sel.ab[i, 4] <- round(stats::logLik(gam.ab)[1], 2)  #log-likelihood
     mod.sel.ab[i, 5] <- MuMIn::AICc(gam.ab)  #AICc
   }
 
-  mod.sel.ab <- data.frame(mod.sel.ab, deltaAICc = mod.sel.ab$AICc - min(mod.sel.ab$AICc), weights = round(MuMIn::Weights(mod.sel.ab$AICc),
+  mod.sel.ab <- data.frame(mod.sel.ab, deltaAICc = mod.sel.ab$AICc - min(mod.sel.ab$AICc), w = round(MuMIn::Weights(mod.sel.ab$AICc),
                                                                                                            3))  #adding delta AICc and AIC weights to the model selection table
   mod.sel.ab <- mod.sel.ab[order(mod.sel.ab$deltaAICc), ]  #order the model selection table according to increasing delta AICc
 
   best.ab <- list()  #empty list for the best models in the model selection table
-  sub.ab <- subset(mod.sel.ab, weights >= lim)  #taking the models which have a delta AIC less or equal to 4
+  sub.ab <- subset(mod.sel.ab, w >= lim)  #taking the models which have a delta AIC less or equal to 4
   if (length(ID.ab) > 1) {
     # conditional part that decides to average models if there are more than one model in the list with the best models
     eval.ab <- array(0, dim = c(length(data.ab[, 1]), 1, length(ID.ab)))  #specifying the array with number of rows equal to the length of the presence-only abundance dataset, 1 column, and dimensions equal to the number of models in the list with the best models
@@ -284,9 +284,9 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
       # loop going through all models in the list, extracting the fitted values, multiplying them by each model weight, and storing
       # the resulting vectors into the array
       best.ab[[i]] <- mod.list.ab[[ID.ab[i]]]  #storing each best model into a new list
-      eval.ab[, , i] <- predict(mod.list.ab[[ID.ab[i]]], newdata = data.ab, type = "response") * (w.ab[ID.ab[i]]/sum(w.ab[ID.ab]))  #multiplying fitted values by weights
-      eval.ab.full[, , i] <- predict(mod.list.ab[[ID.ab[i]]], newdata = data, type = "response") * (w.ab[ID.ab[i]]/sum(w.ab[ID.ab]))  #multiplying predicted values on the full dataset by weights
-      grid.ab[, , i] <- predict(mod.list.ab[[ID.ab[i]]], newdata = data.frame(grid,phat=1), type = "response") * (w.ab[ID.ab[i]]/sum(w.ab[ID.ab]))
+      eval.ab[, , i] <- stats::predict(mod.list.ab[[ID.ab[i]]], newdata = data.ab, type = "response") * (w.ab[ID.ab[i]]/sum(w.ab[ID.ab]))  #multiplying fitted values by weights
+      eval.ab.full[, , i] <- stats::predict(mod.list.ab[[ID.ab[i]]], newdata = data, type = "response") * (w.ab[ID.ab[i]]/sum(w.ab[ID.ab]))  #multiplying predicted values on the full dataset by weights
+      grid.ab[, , i] <- stats::predict(mod.list.ab[[ID.ab[i]]], newdata = data.frame(grid,phat=1), type = "response") * (w.ab[ID.ab[i]]/sum(w.ab[ID.ab]))
     }
     fit.w.ab <- apply(eval.ab, 1, sum)  #sum across the array dimension to get final averaged fitted values (presence-only abundance)
     fit.w.ab.full <- apply(eval.ab.full, 1, sum)  #sum across the array dimension to get final averaged fitted values (full dataset, Hurdle model evaluation)
@@ -294,9 +294,9 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
   } else {
     # conditional part if there is only one model in the list, no averaging
     best.ab <- mod.list.ab[ID.ab[1]]
-    fit.w.ab <- predict(mod.list.ab[[ID.ab[1]]], newdata = data.ab, type = "response")  #taking fitted values of the model
-    fit.w.ab.full <- predict(mod.list.ab[[ID.ab[1]]], newdata = data, type = "response")  #taking predicted values (full dataset) of the model
-    grid.w.ab <- predict(mod.list.ab[[ID.ab[1]]], newdata = data.frame(grid,phat=1), type = "response")
+    fit.w.ab <- stats::predict(mod.list.ab[[ID.ab[1]]], newdata = data.ab, type = "response")  #taking fitted values of the model
+    fit.w.ab.full <- stats::predict(mod.list.ab[[ID.ab[1]]], newdata = data, type = "response")  #taking predicted values (full dataset) of the model
+    grid.w.ab <- stats::predict(mod.list.ab[[ID.ab[1]]], newdata = data.frame(grid,phat=1), type = "response")
   }  #end of conditional part
 
   eval.H <- ifelse(ab.full==0,fit.w.pa,fit.w.ab.full * fit.w.pa)  #multiplying pa with ab (full dataset) predictions (HURDLE)

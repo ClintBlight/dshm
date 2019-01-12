@@ -9,7 +9,7 @@
 #' @export
 dshm_spatial_correlation<-function(coord,z,xlab,ylab,lims){
   data<-data.frame(x=coord[,1],y=coord[,2],z=z)
-  surf<-spatial::surf.ls(6,na.omit(data))
+  surf<-spatial::surf.ls(6,stats::na.omit(data))
   correl<-spatial::correlogram(krig = surf,nint = length(data[,1]),plotit=FALSE)[]
   graphics::plot(correl$x/1000,correl$y,ylim=c(-1,1),type="b",xlab=xlab,ylab=ylab,pch=19,col=grDevices::rgb(0,0,0,0.5))
   graphics::abline(h=0)
