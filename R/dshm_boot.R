@@ -30,11 +30,11 @@ dshm_boot <- function(det.fn.par, effects.pa = NULL,effects.ab = NULL, distdata,
         id<-list()
         if(stratification=="stratum"){
           for (j in 1:length(levels(segdata$Region.Label))){
-            id[[j]]<-sample(rownames(subset(segdata,Region.Label==levels(segdata$Region.Label)[j])),replace=TRUE)
+            id[[j]]<-sample(rownames(subset(segdata,segdata$Region.Label==levels(segdata$Region.Label)[j])),replace=TRUE)
           }
         } else if(stratification=="transect") {
           for (j in 1:length(levels(segdata$Transect.Label))){
-            id[[j]]<-sample(rownames(subset(segdata,Transect.Label==levels(segdata$Transect.Label)[j])),replace=TRUE)
+            id[[j]]<-sample(rownames(subset(segdata,segdata$Transect.Label==levels(segdata$Transect.Label)[j])),replace=TRUE)
           }
         }
         id<-do.call(what = c,id)

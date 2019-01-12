@@ -166,11 +166,11 @@ dshm_fit_4boot <- function(det.fn.par, effects.pa,effects.ab, method, lim, distd
     id<-list()
     if(stratification=="stratum"){
       for (j in 1:length(levels(distdata$Region.Label))){
-        id[[j]]<-sample(rownames(subset(distdata,Region.Label==levels(distdata$Region.Label)[j])),replace=TRUE)
+        id[[j]]<-sample(rownames(subset(distdata,distdata$Region.Label==levels(distdata$Region.Label)[j])),replace=TRUE)
       }
     } else if (stratification == "transect") {
       for (j in 1:length(levels(distdata$Transect.Label))){
-        id[[j]]<-sample(rownames(subset(distdata,Transect.Label==levels(distdata$Transect.Label)[j])),replace=TRUE)
+        id[[j]]<-sample(rownames(subset(distdata,distdata$Transect.Label==levels(distdata$Transect.Label)[j])),replace=TRUE)
       }
     }
     id<-do.call(what = c,id)
