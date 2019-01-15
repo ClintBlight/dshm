@@ -9,6 +9,6 @@
 transects
 }
 \description{
-Transect lines covered by a boad during a dolphin survey.
+Transect lines covered by a boat during a dolphin survey.
 }
 \keyword{datasets}

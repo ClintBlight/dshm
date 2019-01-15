@@ -9,6 +9,6 @@
 depth_crop
 }
 \description{
-Depth for the area of the dolphin survey.
+Depth for the area of a dolphin survey.
 }
 \keyword{datasets}

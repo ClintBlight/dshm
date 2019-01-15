@@ -6,14 +6,14 @@
 \title{Observation data}
 \format{A data frame with 16 rows and 10 variables:
 \describe{
-  \item{Region.Label}{ID for stratum}
+  \item{Region.Label}{ID for stratum where the segment of the sighting is located}
   \item{Area}{Stratum area in km2}
-  \item{Transect.Label}{ID for transect}
-  \item{Sample.Label}{ID for segment}
+  \item{Transect.Label}{ID for transect where the segment of the sighting is located}
+  \item{Sample.Label}{ID for segment where the sighting is located}
   \item{Latitude}{Segment centroid latitude}
   \item{Longitude}{Segment centroid longitude}
   \item{distance}{Sighting perpendicular distance from the transect line}
-  \item{size}{Number of dolphin}
+  \item{size}{Number of dolphins}
   \item{object}{Sighting ID}
   \item{detected}{Required for \code{\link[Distance]{ds}} function}
 }}

@@ -9,6 +9,6 @@
 DR_crop
 }
 \description{
-Least cost distances from main rivers for the area of the dolphin survey.
+Least cost distances from main rivers for the area of a dolphin survey.
 }
 \keyword{datasets}

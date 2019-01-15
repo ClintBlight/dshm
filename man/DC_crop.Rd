@@ -9,6 +9,6 @@
 DC_crop
 }
 \description{
-Least cost distances from the coastline for the area of the dolphin survey.
+Least cost distances from the coastline for the area of a dolphin survey.
 }
 \keyword{datasets}

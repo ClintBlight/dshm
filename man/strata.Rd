@@ -12,6 +12,6 @@
 strata
 }
 \description{
-Strata covered by a boad during a dolphin survey.
+Strata covered by a boat during a dolphin survey.
 }
 \keyword{datasets}

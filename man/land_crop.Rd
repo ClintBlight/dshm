@@ -9,6 +9,6 @@
 land_crop
 }
 \description{
-Land for the area of the dolphin survey.
+Land for the area of a dolphin survey.
 }
 \keyword{datasets}
