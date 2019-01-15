@@ -2,7 +2,7 @@
 % Please edit documentation in R/dshm_plot.R
 \name{dshm_plot}
 \alias{dshm_plot}
-\title{Plots prediction grid and saves it as a raster image}
+\title{Plotting prediction grid}
 \usage{
 dshm_plot(prediction, grid, probability = FALSE, sightings = NULL,
   plot_title = NULL, scale_col = c("blue", "yellow", "red"),
@@ -10,13 +10,18 @@ dshm_plot(prediction, grid, probability = FALSE, sightings = NULL,
   raster_name = NULL)
 }
 \arguments{
-\item{prediction}{Prediction grid returned by dshm_fit$grid_data.}
+\item{prediction}{Predictions for each grid cell in the prediction grid.}
 
-\item{grid}{Grid shapefile (SpatialPolygonsDataFrame object) with specific projection.}
+\item{grid}{Grid as SpatialPolygonsDataFrame.}
 
-\item{probability}{If TRUE colour label is Pr(Presence), if FALSE is Abundance. Default is FALSE.}
+\item{probability}{If \code{TRUE} colour label is Pr(Presence), if \code{FALSE} is Abundance. Default is \code{FALSE}.}
 
-\item{sightings}{Dataframe with at least three columns: 'x' and 'y' coordinates and 'size' for loaction and size of each sighitng, respectively.}
+\item{sightings}{sighting dataframe with at least three columns:
+\itemize{
+  \item x: sighting x coordinate.
+  \item y: sighting y coordinate.
+  \item size: sighting size.
+}}
 
 \item{plot_title}{Title of the plot.}
 
@@ -28,15 +33,18 @@ dshm_plot(prediction, grid, probability = FALSE, sightings = NULL,
 
 \item{cex}{Size of the pixels in the map (visualization purpose only, for true scaled spatial map save as raster).}
 
-\item{saveRaster}{If TRUE the map is saved as a raster file. A grid shapefile with projection is needed. Default is FALSE.}
+\item{saveRaster}{If \code{TRUE} the map is saved as a raster file. Default is \code{TRUE}.}
 
-\item{raster_name}{Name of the saved raster as string.}
+\item{raster_name}{Name of the saved raster.}
 }
 \value{
-Map and raster. Raster name contains information in 'map_type' and 'species'.
+Prediction map and raster image (if \code{saveRaster = TRUE}).
 }
 \description{
-Plots prediction grid and saves it as a raster image
+\code{dshm_plot} plots prediction grids, makes easier changing scale colours and intervals, provides the possibility to save the grid as a .shp file.
+}
+\details{
+For more information about fitting Hurdle models, plotting model predictions and much more you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{fitting_Hurldle.pdf} tutorial.
 }
 \author{
 Filippo Franchini \email{filippo.franchini@outlook.com}

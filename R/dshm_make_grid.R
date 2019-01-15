@@ -1,10 +1,15 @@
-#' Creates a grid
+#' Creating a prediction grid
 #'
-#' @param extent Grid extent as specified in raster.
+#' \code{dshm_make_grid} creates a prediction grid that can be used for Hurdle model spatial predictions.
+#'
+#' @param extent Grid extent as specified in \code{\link[raster]{extent}}.
 #' @param cell.size Grid cell size in meters.
-#' @param projection Grid CRS as specified in raster.
-
+#' @param projection Grid projection as specified in \code{\link[raster]{crs}}.
+#' @return A grid as SpatialPolygonsDataFrame with \code{id} for each grid cell.
+#' @details For more information about creating and preparing a prediction grid you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{build_grid.pdf} tutorial.
+#' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 #' @export
+#'
 dshm_make_grid<-function(extent,cell.size,projection){
   if(sign(extent[1])*sign(extent[2])==1){
     n.cells.x<-floor(abs(abs(extent[2])-abs(extent[1]))/cell.size)

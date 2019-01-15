@@ -1,13 +1,25 @@
-#' Corrects segment shapefile for land and calculates covariate statistics for each segement.
+#' Preparing segments for spatial analysis
 #'
-#' @param segment.data Segment shapefile.
-#' @param land.data Coastline shapefile.
+#' \code{dshm_finalize_segments} calculates covariate statisitcs within each segment. It also corrects segments for land or other obstacles not relevant to the analysis.
+#'
+#' @param segment.data Segments as SpatialPolygonsDataFrame. You can use the function \code{dshm_split_transects} to create segments from transect lines.
+#' @param land.data A SptialPolygonsDataFrame such as land (for marine species) or other obstacles not relevant to predictions.
 #' @param covariates List of covariate raters.
-#' @param fun Function to calculate the covariate statistics within each segment.
-#' @param parallel If TRUE the function is run on multiple cores. Default is FALSE.
-#' @param ncores Number of cores if parallel is TRUE.
-
+#' @param fun Function for covariate statistcs within each segment (i.e. mean or median).
+#' @param parallel If \code{TRUE} the function is run on multiple cores. Default is \code{FALSE}.
+#' @param ncores Number of cores if parallel is \code{TRUE}.
+#' @return Segments as SptialPolygonsDataFrame with following data attached:
+#' \itemize{
+#'   \item Transect.Label: ID for split transect.
+#'   \item Sample.Label: ID for segment.
+#'   \item length: segment length.
+#'   \item area: segment area.
+#'   \item XYZ covariates: different habitat covariates such as depth, distance to coast, etc. specific to each segment.
+#' }
+#' @details For more information about splitting transects into segments as well as checking and correcting segments you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{split_transects.pdf} tutorial.
+#' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 #' @export
+#'
 dshm_finalize_segments<-function(segment.data,land.data = NULL,covariates,fun,parallel=FALSE,ncores=NULL){
 
   t1<-proc.time() #starts recording time

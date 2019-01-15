@@ -2,21 +2,37 @@
 % Please edit documentation in R/dshm_fill_grid.R
 \name{dshm_fill_grid}
 \alias{dshm_fill_grid}
-\title{Corrects grid shapefile for land and calculates covariate statistics within each grid cell}
+\title{Preparing prediction grid for spatial analysis}
 \usage{
 dshm_fill_grid(empty.grid, land.data = NULL, cov, fun, ncores = 2)
 }
 \arguments{
-\item{empty.grid}{Empty grid shapefile.}
+\item{empty.grid}{Empty grid as SptialPolygonsDataFrame. You can use the function \code{dshm_make_grid} to create a prediction grid.}
 
-\item{land.data}{Coastline shapefile.}
+\item{land.data}{A SptialPolygonsDataFrame such as land (for marine species) or other obstacles not relevant to predictions.}
 
-\item{cov}{List of covriate rasters.}
+\item{cov}{List of covriate rasters. Raster names have to match those in the segment dataset.}
 
 \item{fun}{Function for covariate statistcs within each cell (i.e. mean or median).}
 
-\item{ncores}{Number of cores (this function is run in parallel only).}
+\item{ncores}{Number of cores (this function is runs in parallel only).}
+}
+\value{
+Prediction grid as SptialPolygonsDataFrame with following data attached:
+\itemize{
+  \item id: grid cell IDs.
+  \item x.coord: grid cell x coordinates.
+  \item y.coord: grid cell y coordinates.
+  \item area: grid cell area.
+  \item XYZ covariates: different habitat covariates such as depth, distance to coast, etc. specific to each grid cell.
+}
 }
 \description{
-Corrects grid shapefile for land and calculates covariate statistics within each grid cell
+\code{dshm_fill_grid} calculates covariate statisitcs within each grid cell in the prediction grid. It also corrects the prediction grid for land or other obstacles not relevant to predictions.
+}
+\details{
+The grid is used for Hurdle model predictions. It is thus important that raster names in \code{cov} are the same of those in the segment dataset. For more information about creating and preparing a prediction grid you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{build_grid.pdf} tutorial.
+}
+\author{
+Filippo Franchini \email{filippo.franchini@outlook.com}
 }

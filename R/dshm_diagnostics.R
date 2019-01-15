@@ -1,11 +1,20 @@
-#' Computes CDF and plots CDF vs. EDF relationship for dshm objects
+#' Dignostics tool for Hurdle models
 #'
-#' @param model Fitted Hurdle model
-#' @param mute If TRUE returns p-value and test statistics for Kolmogorov-Smirnov test. Default is FALSE.
-#' @param plot If TRUE plots CDF vs EDF and fitted vs. observed values plots. Default is TRUE.
-#' @param plot.n 1 for CDF vs EDF plot and 2 for both CDF vs EDF and fitted vs. observed values plots.
-
+#' \code{dshm_diagnostics} computes the Hurdle model cumulative distribution function (CDF) and it plots it against the empirical distribution function (EDF). It also calculates Kolmogorov-Smirnov test statistics.
+#'
+#' @param model Hurdle model fitted through \code{dshm_fit}.
+#' @param mute If \code{TRUE} returns p-value and test statistics for Kolmogorov-Smirnov test. Default is \code{FALSE}.
+#' @param plot If \code{TRUE} prints CDF vs EDF and fitted values vs. observed values plots. Default is \code{TRUE}.
+#' @param plot.n The number of available plots. If \code{plot.n = 1} then the function prints only the CDF vs EDF plot while if \code{plot.n = 2} the function prints both plots for CDF vs EDF plot and fitted values vs. observed values. Default is \code{plot.n = 1}.
+#' @return Two plots for CDF vs. EDF and observed values vs. fitted values. Kolmogorov-Smirnov test statistics and p-value.
+#' @details The Hurdle model CDF is calculated using the following equation:
+#' \deqn{CDF(n) = (1 - p)(1 - \lambda) + p\lambdaCDF(P(n > 0))}
+#' Where \eqn{n} are the number of observations, \eqn{p} is the probability of presence, \eqn{\lambda} is 0 for absence and 1 for presence, and \eqn{CDF(P(n > 0))} is the zero-trucated Poisson cumulative distribution function, i.e the probability of observing x given the zero-trucated Poisson parameter.
+#'
+#' For more information about fitting Hurdle models you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{fitting_Hurdle.pdf} tutorial.
+#' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 #' @export
+#'
 dshm_diagnostics<-function(model,mute=FALSE,plot=TRUE,plot.n=1){
 
   obs <- model$obs

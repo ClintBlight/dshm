@@ -2,20 +2,23 @@
 % Please edit documentation in R/dshm_correct_segments.R
 \name{dshm_correct_segments}
 \alias{dshm_correct_segments}
-\title{Corrects SpatialPolygons for overlapping features}
+\title{Correcting segments for overlapping features}
 \usage{
 dshm_correct_segments(data, intersections)
 }
 \arguments{
-\item{data}{SpatialPolygonsDataFrame.}
+\item{data}{Segments as SpatialPolygonsDataFrame. You can use the function \code{dshm_split_transects} to create segments from transect lines.}
 
-\item{intersections}{List for all segment intersections.}
+\item{intersections}{The \code{int.ids} object created with the function \code{dshm_check_segments}. This is a list for all segment intersections.}
 }
 \value{
 Polygons corrected for overlapping features.
 }
 \description{
-Corrects SpatialPolygons for overlapping features
+\code{dshm_correct_segments} uses the object \code{int.ids} created with the function \code{dshm_check_segments} to eliminate overlapping fetures between segments.
+}
+\details{
+For more information about splitting transects into segments as well as checking and correcting segments you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{split_transects.pdf} tutorial.
 }
 \author{
 Filippo Franchini \email{filippo.franchini@outlook.com}

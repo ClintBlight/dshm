@@ -1,20 +1,28 @@
-#' Plots prediction grid and saves it as a raster image
+#' Plotting prediction grid
 #'
-#' @param prediction Prediction grid returned by dshm_fit$grid_data.
-#' @param grid Grid shapefile (SpatialPolygonsDataFrame object) with specific projection.
-#' @param probability If TRUE colour label is Pr(Presence), if FALSE is Abundance. Default is FALSE.
-#' @param sightings Dataframe with at least three columns: 'x' and 'y' coordinates and 'size' for loaction and size of each sighitng, respectively.
+#' \code{dshm_plot} plots prediction grids, makes easier changing scale colours and intervals, provides the possibility to save the grid as a .shp file.
+#'
+#' @param prediction Predictions for each grid cell in the prediction grid.
+#' @param grid Grid as SpatialPolygonsDataFrame.
+#' @param probability If \code{TRUE} colour label is Pr(Presence), if \code{FALSE} is Abundance. Default is \code{FALSE}.
+#' @param sightings sighting dataframe with at least three columns:
+#' \itemize{
+#'   \item x: sighting x coordinate.
+#'   \item y: sighting y coordinate.
+#'   \item size: sighting size.
+#' }
 #' @param plot_title Title of the plot.
 #' @param scale_col Vector with colour scale values. Length should correspond to the length of 'scale_val'.
 #' @param scale_lim Vector for lower and upper limits of the colour scale.
 #' @param scale_val Vector for the scale values corresponding to colour transition as defined in 'scale_col'.
 #' @param cex Size of the pixels in the map (visualization purpose only, for true scaled spatial map save as raster).
-#' @param saveRaster If TRUE the map is saved as a raster file. A grid shapefile with projection is needed. Default is FALSE.
-#' @param raster_name Name of the saved raster as string.
-#' @return Map and raster. Raster name contains information in 'map_type' and 'species'.
+#' @param saveRaster If \code{TRUE} the map is saved as a raster file. Default is \code{TRUE}.
+#' @param raster_name Name of the saved raster.
+#' @details For more information about fitting Hurdle models, plotting model predictions and much more you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{fitting_Hurldle.pdf} tutorial.
+#' @return Prediction map and raster image (if \code{saveRaster = TRUE}).
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
-
 #' @export
+#'
 dshm_plot <- function(prediction, grid, probability = FALSE, sightings = NULL, plot_title = NULL, scale_col = c("blue", "yellow",
     "red"), scale_lim = NULL, scale_val = NULL, cex = 1, saveRaster = FALSE, raster_name = NULL) {
 

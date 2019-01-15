@@ -1,13 +1,24 @@
-#' Corrects grid shapefile for land and calculates covariate statistics within each grid cell
+#' Preparing prediction grid for spatial analysis
 #'
-#' @param empty.grid Empty grid shapefile.
-#' @param land.data Coastline shapefile.
-#' @param cov List of covriate rasters.
+#' \code{dshm_fill_grid} calculates covariate statisitcs within each grid cell in the prediction grid. It also corrects the prediction grid for land or other obstacles not relevant to predictions.
+#'
+#' @param empty.grid Empty grid as SptialPolygonsDataFrame. You can use the function \code{dshm_make_grid} to create a prediction grid.
+#' @param land.data A SptialPolygonsDataFrame such as land (for marine species) or other obstacles not relevant to predictions.
+#' @param cov List of covriate rasters. Raster names have to match those in the segment dataset.
 #' @param fun Function for covariate statistcs within each cell (i.e. mean or median).
-#' @param ncores Number of cores (this function is run in parallel only).
-
-
+#' @param ncores Number of cores (this function is runs in parallel only).
+#' @details The grid is used for Hurdle model predictions. It is thus important that raster names in \code{cov} are the same of those in the segment dataset. For more information about creating and preparing a prediction grid you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{build_grid.pdf} tutorial.
+#' @return Prediction grid as SptialPolygonsDataFrame with following data attached:
+#' \itemize{
+#'   \item id: grid cell IDs.
+#'   \item x.coord: grid cell x coordinates.
+#'   \item y.coord: grid cell y coordinates.
+#'   \item area: grid cell area.
+#'   \item XYZ covariates: different habitat covariates such as depth, distance to coast, etc. specific to each grid cell.
+#' }
+#' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 #' @export
+#'
 dshm_fill_grid<-function(empty.grid,land.data = NULL,cov,fun,ncores = 2){
 
   if (!is.null(land.data)){

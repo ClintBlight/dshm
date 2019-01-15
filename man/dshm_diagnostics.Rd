@@ -2,19 +2,32 @@
 % Please edit documentation in R/dshm_diagnostics.R
 \name{dshm_diagnostics}
 \alias{dshm_diagnostics}
-\title{Computes CDF and plots CDF vs. EDF relationship for dshm objects}
+\title{Dignostics tool for Hurdle models}
 \usage{
 dshm_diagnostics(model, mute = FALSE, plot = TRUE, plot.n = 1)
 }
 \arguments{
-\item{model}{Fitted Hurdle model}
+\item{model}{Hurdle model fitted through \code{dshm_fit}.}
 
-\item{mute}{If TRUE returns p-value and test statistics for Kolmogorov-Smirnov test. Default is FALSE.}
+\item{mute}{If \code{TRUE} returns p-value and test statistics for Kolmogorov-Smirnov test. Default is \code{FALSE}.}
 
-\item{plot}{If TRUE plots CDF vs EDF and fitted vs. observed values plots. Default is TRUE.}
+\item{plot}{If \code{TRUE} prints CDF vs EDF and fitted values vs. observed values plots. Default is \code{TRUE}.}
 
-\item{plot.n}{1 for CDF vs EDF plot and 2 for both CDF vs EDF and fitted vs. observed values plots.}
+\item{plot.n}{The number of available plots. If \code{plot.n = 1} then the function prints only the CDF vs EDF plot while if \code{plot.n = 2} the function prints both plots for CDF vs EDF plot and fitted values vs. observed values. Default is \code{plot.n = 1}.}
+}
+\value{
+Two plots for CDF vs. EDF and observed values vs. fitted values. Kolmogorov-Smirnov test statistics and p-value.
 }
 \description{
-Computes CDF and plots CDF vs. EDF relationship for dshm objects
+\code{dshm_diagnostics} computes the Hurdle model cumulative distribution function (CDF) and it plots it against the empirical distribution function (EDF). It also calculates Kolmogorov-Smirnov test statistics.
+}
+\details{
+The Hurdle model CDF is calculated using the following equation:
+\deqn{CDF(n) = (1 - p)(1 - \lambda) + p\lambdaCDF(P(n > 0))}
+Where \eqn{n} are the number of observations, \eqn{p} is the probability of presence, \eqn{\lambda} is 0 for absence and 1 for presence, and \eqn{CDF(P(n > 0))} is the zero-trucated Poisson cumulative distribution function, i.e the probability of observing x given the zero-trucated Poisson parameter.
+
+For more information about fitting Hurdle models you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{fitting_Hurdle.pdf} tutorial.
+}
+\author{
+Filippo Franchini \email{filippo.franchini@outlook.com}
 }

@@ -9,39 +9,60 @@ dshm_boot(det.fn.par, effects.pa = NULL, effects.ab = NULL, distdata,
   ncores = NULL, mute = TRUE, stratification = "none")
 }
 \arguments{
-\item{det.fn.par}{List of detection function parameters. For strucuture see the documentation for the 'ds' package.}
+\item{det.fn.par}{List of detection function parameters. For strucuture see the documentation for \code{\link[Distance]{ds}}.}
 
 \item{effects.pa}{List of characters defining the binomial gam models to be fitted. For model structure see \code{\link[mgcv]{gam}}.}
 
 \item{effects.ab}{List of characters defining the zero-truncated Poisson gam models to be fitted. For model structure see \code{\link[mgcv]{gam}}.}
 
-\item{distdata}{Dataframe for distance sampling observations. For strucuture see the documentation for the 'ds' package.}
+\item{distdata}{Dataframe for distance sampling observations. For strucuture see the documentation for \code{\link[Distance]{ds}}.}
 
-\item{obsdata}{Dataframe object containing 4 columns: (1) 'Sample.Label' (i.e. label for segments), (2) 'size' for cluster size, (3) 'distance' (in km) for perpendicular distance of sighting from the transect line, and (4) 'Effort' for segment length (in km).}
+\item{obsdata}{Dataframe object with the following structure:
+\itemize{
+  \item Region.Label: ID for stratum where the animal was observed.
+  \item Transect.Label: ID for transect where the animal was observed.
+  \item Sample.Label: ID for segment where the animal was observed.
+  \item distance: sighting perpendicular distance from the transect line.
+  \item size: sighting size, i.e. number of animals.
+  \item object: sighting ID.
+}}
 
-\item{segdata}{Dataframe object with at least 3 columns: (1) 'Transect.Label' (i.e. label for transects), (2) 'Sample.Label' (i.e. label for segments), and (3) 'Effort' for segment length (in km). It may also contain additional columns with relevant habitat covariates specific to each segment that will be fed into the spatial model.}
+\item{segdata}{Dataframe object with the following strucuture:
+\itemize{
+  \item Region.Label: ID for stratum where the transects and segments are located.
+  \item Transect.Label: ID for split transect.
+  \item Sample.Label: ID for segment.
+  \item length: segment length.
+  \item area: segment area.
+  \item XYZ covariates: different habitat covariates such as depth, distance to coast, etc. specific to each segment.
+}
+You do not have to create segdata manually. You can use the functions in \code{\link{dshm}} to automatically split transects into segments. For more information you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{split_transects.pdf} tutorial.}
 
-\item{model_fit}{Model fitted with the function 'dshm_fit'.}
+\item{model_fit}{Model fitted with the function \code{\link{dshm_fit}}.}
 
 \item{grid}{Grid used for model prediction. Column names for habitat covriates should correspond to those in 'segdata'.}
 
-\item{group}{If TRUE group abundance is estimated (i.e. 'size' = 1).}
+\item{group}{If \code{TRUE} group abundance is estimated (i.e. sighting size = 1). Default is \code{FALSE}.}
 
-\item{nsim}{Number of simulations,}
+\item{nsim}{Number of simulations.}
 
-\item{parallel}{If TRUE the simulations are performed on multiple cpus. Default is FALSE.}
+\item{parallel}{If \code{TRUE} the simulations are performed on multiple cores. Default is \code{FALSE}.}
 
-\item{ncores}{Number of cpus for parallel execution.}
+\item{ncores}{Number of cores for parallel execution.}
 
-\item{mute}{If TRUE all unrelevant messages are suppressed. Default is TRUE.}
+\item{mute}{If \code{TRUE} all unrelevant messages are suppressed. Default is \code{TRUE}.}
 
-\item{stratification}{'transect' or 'stratum'}
+\item{stratification}{Bootstrap can be executed at the level of the \code{"transect"} or \code{"stratum"}. Default is \code{stratification = "none"}.}
 }
 \value{
-A list of two arrays: (1) 'sim_grid' containing all simulated grids and (2) 'obs_fit' containing observed and fitted values for each simulation.
+A list of two arrays:
+\itemize{
+  \item sim_grid: simulated grids.
+  \item obs_fit: observed and fitted values for each simulation.
+}
 }
 \description{
-Non-parametric bootstrap for Hurdle model uncertainty
+\code{dshm_boot} performs a non-parametric bootstrap to generate Hurdle model predictions on a spatial grid. Prediction grids can then be used to calculate confidence intervals. The function bases on a (stratified) sampling process with replacement at the segment level.
 }
 \author{
 Filippo Franchini \email{filippo.franchini@outlook.com}

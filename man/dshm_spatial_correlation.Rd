@@ -2,14 +2,14 @@
 % Please edit documentation in R/dshm_spatial_correlation.R
 \name{dshm_spatial_correlation}
 \alias{dshm_spatial_correlation}
-\title{Calculates spatial correlation for dshm}
+\title{Calculating spatial correlation for Hurdle models.}
 \usage{
 dshm_spatial_correlation(coord, z, xlab, ylab, lims)
 }
 \arguments{
-\item{coord}{Centroids of each segment.}
+\item{coord}{Centroids of each segment as defined in \code{\link[sp]{coordinates}}.}
 
-\item{z}{Fitted values of model residuals.}
+\item{z}{Model residuals.}
 
 \item{xlab}{Label for x-axis.}
 
@@ -17,6 +17,15 @@ dshm_spatial_correlation(coord, z, xlab, ylab, lims)
 
 \item{lims}{A vector of minimum and maximum correlation values.}
 }
+\value{
+Plot for correlation coefficient vs. distance and percentage of data within \code{lims}.
+}
 \description{
-Calculates spatial correlation for dshm
+\code{dshm_spatial_correlation} calculates spatial correlation for fitted Hurdle models.
+}
+\details{
+For more information about fitting Hurdle models, plotting model predictions and much more you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{fitting_Hurldle.pdf} tutorial.
+}
+\author{
+Filippo Franchini \email{filippo.franchini@outlook.com}
 }

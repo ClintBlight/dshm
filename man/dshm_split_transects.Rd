@@ -2,33 +2,42 @@
 % Please edit documentation in R/dshm_split_transects.R
 \name{dshm_split_transects}
 \alias{dshm_split_transects}
-\title{Splits transect lines into segments and adds buffer as well as metadata}
+\title{Splitting transect lines into segments}
 \usage{
-dshm_split_transects(transect.data, inter.dist, lwr, search.time, w,
-  parallel = FALSE, ncores = NULL, cap = TRUE)
+dshm_split_transects(transect.data, inter.dist = 0.01, lwr,
+  search.time = 15, w, parallel = FALSE, ncores = NULL, cap = TRUE)
 }
 \arguments{
 \item{transect.data}{Transect lines as SpatialLinesDataFrame.}
 
-\item{inter.dist}{Distance between each segment in meters.}
+\item{inter.dist}{Distance between each segment in meters. Default is 10 cm.}
 
 \item{lwr}{Lower limit in meters for segments.}
 
-\item{search.time}{Time the routine has to search for each set of cutting points.}
+\item{search.time}{Time in seconds the routine has to search for the solution. Default is 15s. Note this is not the time required to finish calculations. See the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{split_transects.pdf} tutorial for more information.}
 
-\item{w}{Buffer in meters.}
+\item{w}{Segment buffer in meters.}
 
-\item{parallel}{If TRUE the rountine is carried out by multiple cores. Default is FALSE.}
+\item{parallel}{If \code{TRUE} calculations are carried out on multiple cores. Default is \code{FALSE}.}
 
 \item{ncores}{Number of cores.}
 
-\item{cap}{If TRUE a cap is added to the ends of each splitted transect.}
+\item{cap}{If \code{TRUE} a cap is added to the ends of each splitted transect.}
 }
 \value{
-Splitted transect lines with buffer and information about: (1) 'Transect.Label' the original transect id, (2) 'Sample.Label' the segment id, (3) 'lenght' the length of the segment, and (4) 'area' the area of the segment.
+Segments as SpatialPolygonsDataFrame with attached data:
+\itemize{
+  \item Transect.Label: ID for split transect.
+  \item Sample.Label: ID for segment.
+  \item lenght: segment length.
+  \item area: segment area.
+}
 }
 \description{
-Splits transect lines into segments and adds buffer as well as metadata
+Splits transect lines into segments, adds buffer, and attaches data.
+}
+\details{
+For more information about splitting transects into segments as well as checking and correcting segments you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{split_transects.pdf} tutorial.
 }
 \author{
 Filippo Franchini \email{filippo.franchini@outlook.com}

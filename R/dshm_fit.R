@@ -1,23 +1,60 @@
-#' Fits and averages spatial Hurdle models
+#' Fitting spatial Hurdle models
+#'
+#' \code{dshm_fit} fits Hurdle models, performs model averaging, calculates Hurdle model predictions on a user-defined grid.
 #'
 #' @param det.fn Detection function fitted by \code{\link[Distance]{ds}}.
 #' @param effects.pa List of characters defining the binomial gam models to be fitted. For model structure see \code{\link[mgcv]{gam}}.
 #' @param effects.ab List of characters defining the zero-truncated Poisson gam models to be fitted. For model structure see \code{\link[mgcv]{gam}}.
 #' @param knots.pa List of knot gam knot positions for each smooth term of the fitted binomial models.
 #' @param knots.ab List of knot gam knot positions for each smooth term of the fitted zero-truncated Poisson models.
-#' @param method Character. GAM fitting method. Note that 'REML' is not available since it is not campatible with \code{\link[countreg]{ztpoisson}}. Default is 'GCV.Cp'.
+#' @param method GAM fitting method. Note that \code{"REML"} is not available since it is not campatible with \code{\link[countreg]{ztpoisson}}. Default is \code{"GCV.Cp"}.
 #' @param lim AIC weight (AICw) threshold for model averaging. Models with AICw < lim are not averaged. Default is 0.1.
-#' @param obsdata Dataframe object containing 4 columns: (1) 'Sample.Label' (i.e. label for segments), (2) 'size' for cluster size, (3) 'distance' (in km) for perpendicular distance of sighting from the transect line, and (4) 'Effort' for segment length (in km).
-#' @param segdata Dataframe object with at least 3 columns: (1) 'Transect.Label' (i.e. label for transects), (2) 'Sample.Label' (i.e. label for segments), and (3) 'Effort' for segment length (in km). It may also contain additional columns with relevant habitat covariates specific to each segment that will be fed into the spatial model.
-#' @param grid Grid used for model prediction. Column names for habitat covriates should correspond to those in 'segdata'.
-#' @param SelectionTable If TRUE model selection table is reported for each submodel. Default is TRUE.
-#' @param showSelectedModels If TRUE best fitted submodel variants are reported. Default is FALSE.
-#' @param group If TRUE group abundance is estimated (i.e. 'size' = 1).
-#' @param strip.width Strip width to calculate segment area if there is no "area" column.
-#' @return A list of 3 objects: (1) 'models' containing a list for all presence-absence submodel variants ('pa') and all submodel variants for abundance conditional on presence ('ab'); (2) 'info' containing a list of variant weights and best variant ids for both submodels ('weights.pa' and 'weights.ab', and 'ID.pa' and 'ID.ab' respectively); and (3) 'grid_data' containing a list of prediction grids for presence-absence submodel ('pa'), submodel for abundance conditional on presence ('ab'), and Hurdle model ('H').
+#' @param obsdata Dataframe object with the following structure:
+#' \itemize{
+#'   \item Region.Label: ID for stratum where the animal was observed.
+#'   \item Transect.Label: ID for transect where the animal was observed.
+#'   \item Sample.Label: ID for segment where the animal was observed.
+#'   \item distance: sighting perpendicular distance from the transect line.
+#'   \item size: sighting size, i.e. number of animals.
+#'   \item object: sighting ID.
+#' }
+#' @param segdata Dataframe object with the following strucuture:
+#' \itemize{
+#'   \item Region.Label: ID for stratum where the transects and segments are located.
+#'   \item Transect.Label: ID for split transect.
+#'   \item Sample.Label: ID for segment.
+#'   \item length: segment length.
+#'   \item area: segment area.
+#'   \item XYZ covariates: different habitat covariates such as depth, distance to coast, etc. specific to each segment.
+#' }
+#' You do not have to create segdata manually. You can use the functions in \code{\link{dshm}} to automatically split transects into segments. For more information you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{split_transects.pdf} tutorial.
+#' @param grid Grid used for model prediction. Column names for habitat covriates should correspond to those in 'segdata'. You can create a grid using the function \code{\link{dshm_make_grid}}. For more information about creating and preparing a grid for spatial analysis you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{build_grid.pdf} tutorial.
+#' @param SelectionTable If \code{TRUE} model selection table is reported for each submodel. Default is \code{TRUE}.
+#' @param showSelectedModels If \code{TRUE} best fitted submodel variants are reported. Default is \code{FALSE}.
+#' @param group If \code{TRUE} group abundance is estimated (i.e. sighting size = 1). Default is \code{FALSE}.
+#' @param strip.width Strip width to calculate segment area if there is no "area" column in segdata.
+#' @details Hurdle models are two stage models. They consist in a presence-absence (\code{pa}) submodel and an abundance-given-presence (\code{ab}) submodel. Each submodel can be specified in many ways that we call submodel variants. Final Hurdle model predictions are obtained by multiplying \code{pa} with \code{ab} predictions. For more information about fitting Hurdle models you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{fitting_Hurldle.pdf} tutorial.
+#' @return A list of 6 objects:
+#' \itemize{
+#'   \item models: list of fitted \code{pa} and \code{ab} submodel variants.
+#'   \item info: list of information for the fitted submodel variants.\itemize{
+#'     \item ID: ID of selected models.
+#'     \item k: number of knots for all model variants.
+#'     \item weight: AIC weights for all model variants.
+#'     \item edfs: effective degree of freedom for all model variants.
+#'     \item k.loc: knot locations for all model variants.
+#'     \item exdev: explained deviances for all model variants.
+#'     \item method: fitting methods for all model variants.
+#'     \item lim: selected AIC weight threshold for model averaging.
+#'   }
+#'   \item grid_data: prediction grids for presence-absence submodel (\code{pa}), abundance-given-presence submodel (\code{ab}) and Hurdle model (\code{H}).
+#'   \item fitted: fitted values for presence-absence submodel (\code{pa}) and abundance-given-presence submodel (\code{ab.full}).
+#'   \item obs: original observations.
+#'   \item residuals: Hurdle model residuals.
+#' }
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
-
 #' @export
+#'
 dshm_fit <- function(det.fn, effects.pa = NULL,effects.ab = NULL,knots.pa=NULL ,knots.ab=NULL, method = "GCV.Cp", lim = 0.1, obsdata,
     segdata, grid, SelectionTable = TRUE, showSelectedModels = FALSE, group = FALSE, strip.width = NULL) {
 

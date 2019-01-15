@@ -2,18 +2,25 @@
 % Please edit documentation in R/dshm_check_segments.R
 \name{dshm_check_segments}
 \alias{dshm_check_segments}
-\title{Check if there are overlapping features between SpatialPolygons}
+\title{Checking overlapping features between segments}
 \usage{
 dshm_check_segments(data)
 }
 \arguments{
-\item{data}{Segments or other datasets containing polygons as SpatialPolygonsDataFrame.}
+\item{data}{Segments as SpatialPolygonsDataFrame. You can use the function \code{dshm_split_transects} to create segments from transect lines.}
 }
 \value{
-Nothing. It tells if there are intersecting polygons and how many are they. In case of match, it stores in the Global Environent a list 'int.ids' containing the ids of all intersecting polygons. This is used by 'dshm_correct_segments'.
+Nothing if there are no overlapping features between segments. In case of intersecting polygons the function returns:
+\itemize{
+  \item int.ids: a map for all intersections. This is used by the function \code{dshm_correct_segments}.
+  \item inter.Polys: a list of all intersecting polygons.
+}
 }
 \description{
-Check if there are overlapping features between SpatialPolygons
+\code{dshm_check_segments} checks if there are overlapping features between segments created by \code{dshm_split_transects}.
+}
+\details{
+For more information about splitting transects into segments as well as checking and correcting segments you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{split_transects.pdf} tutorial.
 }
 \author{
 Filippo Franchini \email{filippo.franchini@outlook.com}

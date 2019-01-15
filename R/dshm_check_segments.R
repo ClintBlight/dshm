@@ -1,10 +1,17 @@
-#' Check if there are overlapping features between SpatialPolygons
+#' Checking overlapping features between segments
 #'
-#' @param data Segments or other datasets containing polygons as SpatialPolygonsDataFrame.
-#' @return Nothing. It tells if there are intersecting polygons and how many are they. In case of match, it stores in the Global Environent a list 'int.ids' containing the ids of all intersecting polygons. This is used by 'dshm_correct_segments'.
+#' \code{dshm_check_segments} checks if there are overlapping features between segments created by \code{dshm_split_transects}.
+#'
+#' @param data Segments as SpatialPolygonsDataFrame. You can use the function \code{dshm_split_transects} to create segments from transect lines.
+#' @return Nothing if there are no overlapping features between segments. In case of intersecting polygons the function returns:
+#' \itemize{
+#'   \item int.ids: a map for all intersections. This is used by the function \code{dshm_correct_segments}.
+#'   \item inter.Polys: a list of all intersecting polygons.
+#' }
+#' @details For more information about splitting transects into segments as well as checking and correcting segments you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{split_transects.pdf} tutorial.
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
-
 #' @export
+#'
 dshm_check_segments<-function(data){
 
   mat<-rgeos::gIntersects(rgeos::gBuffer(data, byid=TRUE, width=0),byid=TRUE,checkValidity=TRUE) #matrix for intersections, 'TRUE' if interaction
