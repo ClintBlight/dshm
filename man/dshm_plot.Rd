@@ -7,7 +7,7 @@
 dshm_plot(prediction, grid, probability = FALSE, sightings = NULL,
   plot_title = NULL, scale_col = c("blue", "yellow", "red"),
   scale_lim = NULL, scale_val = NULL, cex = 1, saveRaster = FALSE,
-  raster_name = NULL)
+  raster_name = NULL, resolution)
 }
 \arguments{
 \item{prediction}{Predictions for each grid cell in the prediction grid.}
@@ -36,6 +36,8 @@ dshm_plot(prediction, grid, probability = FALSE, sightings = NULL,
 \item{saveRaster}{If \code{TRUE} the map is saved as a raster file. Default is \code{TRUE}.}
 
 \item{raster_name}{Name of the saved raster.}
+
+\item{resolution}{Raster resolution.}
 }
 \value{
 Prediction map and raster image (if \code{saveRaster = TRUE}).

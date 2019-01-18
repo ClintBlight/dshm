@@ -18,13 +18,14 @@
 #' @param cex Size of the pixels in the map (visualization purpose only, for true scaled spatial map save as raster).
 #' @param saveRaster If \code{TRUE} the map is saved as a raster file. Default is \code{TRUE}.
 #' @param raster_name Name of the saved raster.
+#' @param resolution Raster resolution.
 #' @details For more information about fitting Hurdle models, plotting model predictions and much more you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{fitting_Hurldle.pdf} tutorial.
 #' @return Prediction map and raster image (if \code{saveRaster = TRUE}).
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 #' @export
 #'
 dshm_plot <- function(prediction, grid, probability = FALSE, sightings = NULL, plot_title = NULL, scale_col = c("blue", "yellow",
-    "red"), scale_lim = NULL, scale_val = NULL, cex = 1, saveRaster = FALSE, raster_name = NULL) {
+    "red"), scale_lim = NULL, scale_val = NULL, cex = 1, saveRaster = FALSE, raster_name = NULL,resolution) {
 
     if (probability) {
         lab = "Pr(presence)"
@@ -33,17 +34,13 @@ dshm_plot <- function(prediction, grid, probability = FALSE, sightings = NULL, p
     }
 
     if (saveRaster) {
-        grid.H.reduced <- data.frame(id = grid$id, P = prediction)
-        cat("\n\n Loading grid shapefile and generating raster...\n\n ")
-        #grid.shp <- rgdal::readOGR(grid.shp, verbose = FALSE)
-        grid.shp <- grid[, as.numeric(rownames(subset(data.frame(col.n=colnames(grid@data),colnames(grid@data)=="id"),col.n=="id")))]
-        GRID.pred <- raster::merge(grid, grid.H.reduced, by = "id")
 
         r <- raster::raster()
         raster::crs(r) <- raster::crs(grid)
         raster::extent(r) <- raster::extent(grid)
+        raster::res(r) <- resolution
 
-        ras <- raster::rasterize(GRID.pred, r, "P")
+        ras <- raster::rasterize(grid, r, prediction)
         raster::writeRaster(ras, paste(raster_name), format = "GTiff", overwrite = TRUE)
     }
 
