@@ -40,7 +40,7 @@ dshm_plot <- function(prediction, grid, probability = FALSE, sightings = NULL, p
         raster::extent(r) <- raster::extent(grid)
         raster::res(r) <- resolution
 
-        ras <- raster::rasterize(grid, r, prediction)
+        ras <- raster::rasterize(sp::coordinates(grid), r, prediction)
         raster::writeRaster(ras, paste(raster_name), format = "GTiff", overwrite = TRUE)
     }
 
