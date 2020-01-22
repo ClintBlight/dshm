@@ -21,45 +21,50 @@
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 #' @export
 #'
-dshm_split_transects<-function(transect.data,inter.dist = 0.01,lwr,search.time = 15,w,parallel=FALSE,ncores=NULL,cap = TRUE){
+dshm_split_transects<-function(transect.data, inter.dist = 0.01,
+                               lwr, search.time = 15, w, parallel=FALSE, ncores=NULL, cap = TRUE){
 
-  t1<-proc.time() #starts recording time
+  t1 <- proc.time() #starts recording time
   cat("\n\n Splitting transects...\n\n ") #message
-  if (parallel=="TRUE") { #parallel execution
-    if(Sys.info()[[1]]=="Windows"){
-      cl<-parallel::makeCluster(ncores)
+
+  if (parallel == "TRUE") { #parallel execution
+
+    if(Sys.info()[[1]] == "Windows"){
+      cl <- parallel::makeCluster(ncores)
       doParallel::registerDoParallel(cl)
     } else {
-      cl<-doMC::registerDoMC(ncores) #register cores
+      cl <- doMC::registerDoMC(ncores) #register cores
     }
 
     `%dopar%` <- foreach::`%dopar%`
 
-    segments<-foreach::foreach(i=1:length(transect.data)) %dopar% { #running the 'dshm_split_segments' on multiple cores
-      ext<-dshm_split_transect(transect.data[i,],inter.dist,lwr,search.time,w,cap=cap)
+    segments <- foreach::foreach(i = 1:length(transect.data)) %dopar% { #running the 'dshm_split_segments' on multiple cores
+      ext <- dshm_split_transect(transect.data[i,], inter.dist, lwr, search.time, w, cap = cap)
       return(ext) #returning segments
     }
 
-    if(Sys.info()[[1]]=="Windows"){
+    if(Sys.info()[[1]] == "Windows"){
       parallel::stopCluster(cl)
     }
 
-    t2<-(proc.time()-t1) #stopping recording time
-    cat(paste(round(t2[3]/60,3)," minutes elapsed.")) #printing elapsed time
-    segments.bind<-do.call(raster::bind, segments) #binding all the segments together in one object
+    t2 <- (proc.time() - t1) #stopping recording time
+    cat(paste(round(t2[3]/60, 3), " minutes elapsed.")) #printing elapsed time
+    segments.bind <- do.call(raster::bind, segments) #binding all the segments together in one object
+
   } else { #non-parallel execution
+
     `%do%` <- foreach::`%do%`
     pb <- utils::txtProgressBar(min = 0, max = length(transect.data), style = 3) #setting progress bar (not available for parallel)
 
-    segments<-foreach::foreach(i=1:length(transect.data)) %do% { #running the 'dshm_split_segments'
-      ext<-dshm_split_transect(transect.data[i,],inter.dist,lwr,search.time,w,cap=cap)
+    segments <- foreach::foreach(i = 1:length(transect.data)) %do% { #running the 'dshm_split_segments'
+      ext <- dshm_split_transect(transect.data[i,], inter.dist, lwr, search.time, w, cap = cap)
       utils::setTxtProgressBar(pb, i) #updating progress bar at each iteration
       return(ext) #returning segments
     }
 
-    t2<-(proc.time()-t1) #stopping recording time
-    cat(paste("\n\n ",round(t2[3]/60,3)," minutes elapsed.\n\n ")) #printing elapsed time
-    segments.bind<-do.call(raster::bind, segments) #binding all the segments together in one object
+    t2 <- (proc.time() - t1) #stopping recording time
+    cat(paste("\n\n ", round(t2[3]/60, 3), " minutes elapsed.\n\n ")) #printing elapsed time
+    segments.bind <- do.call(raster::bind, segments) #binding all the segments together in one object
   }
 
   return(segments.bind) #returning bound segments
