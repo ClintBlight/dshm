@@ -12,7 +12,7 @@ dshm_correct_segments(data, intersections)
 \item{intersections}{The \code{int.ids} object created with the function \code{dshm_check_segments}. This is a list for all segment intersections.}
 }
 \value{
-Polygons corrected for overlapping features.
+Segments as SpatialPolygonsDataFrame corrected for overlapping features.
 }
 \description{
 \code{dshm_correct_segments} uses the object \code{int.ids} created with the function \code{dshm_check_segments} to eliminate overlapping fetures between segments.

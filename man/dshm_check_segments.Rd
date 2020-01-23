@@ -2,7 +2,7 @@
 % Please edit documentation in R/dshm_check_segments.R
 \name{dshm_check_segments}
 \alias{dshm_check_segments}
-\title{Checking overlapping features between segments}
+\title{Checking for overlapping features between segments}
 \usage{
 dshm_check_segments(data)
 }

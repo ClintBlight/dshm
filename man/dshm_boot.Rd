@@ -5,8 +5,9 @@
 \title{Non-parametric bootstrap for Hurdle model uncertainty}
 \usage{
 dshm_boot(det.fn.par, effects.pa = NULL, effects.ab = NULL, distdata,
-  obsdata, segdata, model_fit, grid, group = FALSE, nsim, parallel = FALSE,
-  ncores = NULL, mute = TRUE, stratification = "none")
+  obsdata, segdata, model_fit, grid, group = FALSE, nsim,
+  parallel = FALSE, ncores = NULL, mute = TRUE,
+  stratification = "none")
 }
 \arguments{
 \item{det.fn.par}{List of detection function parameters. For strucuture see the documentation for \code{\link[Distance]{ds}}.}

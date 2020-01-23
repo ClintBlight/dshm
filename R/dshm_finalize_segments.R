@@ -4,9 +4,9 @@
 #'
 #' @param segment.data Segments as SpatialPolygonsDataFrame. You can use the function \code{dshm_split_transects} to create segments from transect lines.
 #' @param land.data A SptialPolygonsDataFrame such as land (for marine species) or other obstacles not relevant to predictions.
-#' @param covariates List of covariate raters.
+#' @param covariates List of covariate rasters.
 #' @param fun Function for covariate statistcs within each segment (i.e. mean or median).
-#' @param parallel If \code{TRUE} the function is run on multiple cores. Default is \code{FALSE}.
+#' @param parallel If \code{TRUE} the function is running on multiple cores. Default is \code{FALSE}.
 #' @param ncores Number of cores if parallel is \code{TRUE}.
 #' @return Segments as SptialPolygonsDataFrame with following data attached:
 #' \itemize{

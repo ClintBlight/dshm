@@ -4,10 +4,10 @@
 \alias{dshm_fit}
 \title{Fitting spatial Hurdle models}
 \usage{
-dshm_fit(det.fn, effects.pa = NULL, effects.ab = NULL, knots.pa = NULL,
-  knots.ab = NULL, method = "GCV.Cp", lim = 0.1, obsdata, segdata, grid,
-  SelectionTable = TRUE, showSelectedModels = FALSE, group = FALSE,
-  strip.width = NULL)
+dshm_fit(det.fn, effects.pa = NULL, effects.ab = NULL,
+  knots.pa = NULL, knots.ab = NULL, method = "GCV.Cp", lim = 0.1,
+  obsdata, segdata, grid, SelectionTable = TRUE,
+  showSelectedModels = FALSE, group = FALSE, strip.width = NULL)
 }
 \arguments{
 \item{det.fn}{Detection function fitted by \code{\link[Distance]{ds}}.}

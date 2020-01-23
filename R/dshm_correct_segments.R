@@ -4,11 +4,12 @@
 #'
 #' @param data Segments as SpatialPolygonsDataFrame. You can use the function \code{dshm_split_transects} to create segments from transect lines.
 #' @param intersections The \code{int.ids} object created with the function \code{dshm_check_segments}. This is a list for all segment intersections.
-#' @return Polygons corrected for overlapping features.
+#' @return Segments as SpatialPolygonsDataFrame corrected for overlapping features.
 #' @details For more information about splitting transects into segments as well as checking and correcting segments you can download the \href{http://github.com/FilippoFranchini/dshm/blob/master/vignettes}{split_transects.pdf} tutorial.
 #' @author Filippo Franchini \email{filippo.franchini@@outlook.com}
 
 #' @export
+
 dshm_correct_segments <- function(data, intersections){
 
   mod.seg <- list() #empty list for modified segments
