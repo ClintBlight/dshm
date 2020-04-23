@@ -9,6 +9,4 @@ To install the dshm package:
 
 2) Install dshm by typing devtools::install_github("FilippoFranchini/dshm"). Be patient, it might take a minute if your package library is not up-to-date.
 
-Note: Parallelization is currently available only for macs. Make sure you have the doMC package installed.
-
 Enjoy dshm
