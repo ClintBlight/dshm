@@ -53,9 +53,13 @@ dshm_check_segments <- function(data){
 
     int.polys.nonulls <- int.polys[!sapply(int.polys, is.null)] #take out NULL slots from 'int.polys' list
     cat(paste(length(int.polys.nonulls)," overlapping features found. Go to 'dshm_correct_segments' function."))
-
-    inter.Polys <- do.call(raster::bind, int.polys.nonulls)
-
+    
+    if (length(int.polys.nonulls) > 1 ) {
+      inter.Polys <- do.call(raster::bind, int.polys.nonulls)
+    } else {
+      inter.Polys <- int.polys.nonulls[[1]]
+    }
+    
     return(list(inter.IDs = int.ids, inter.Polys = inter.Polys))
 
   }

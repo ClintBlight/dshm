@@ -47,10 +47,6 @@ dshm_split_transects<-function(transect.data, inter.dist = 0.01,
       parallel::stopCluster(cl)
     }
 
-    t2 <- (proc.time() - t1) #stopping recording time
-    cat(paste(round(t2[3]/60, 3), " minutes elapsed.")) #printing elapsed time
-    segments.bind <- do.call(raster::bind, segments) #binding all the segments together in one object
-
   } else { #non-parallel execution
 
     `%do%` <- foreach::`%do%`
@@ -62,11 +58,17 @@ dshm_split_transects<-function(transect.data, inter.dist = 0.01,
       return(ext) #returning segments
     }
 
-    t2 <- (proc.time() - t1) #stopping recording time
-    cat(paste("\n\n ", round(t2[3]/60, 3), " minutes elapsed.\n\n ")) #printing elapsed time
-    segments.bind <- do.call(raster::bind, segments) #binding all the segments together in one object
   }
-
+  
+  t2 <- (proc.time() - t1) #stopping recording time
+  cat(paste("\n\n ",round(t2[3]/60, 3), " minutes elapsed.\n\n ")) #printing elapsed time
+  
+  if (length(segments) > 1 ) {
+    segments.bind <- do.call(raster::bind, segments) #binding all the segments together in one object
+  } else {
+    segments.bind <- segments[[1]]
+  }
+  
   return(segments.bind) #returning bound segments
 
 }
