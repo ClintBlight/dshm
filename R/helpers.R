@@ -38,6 +38,16 @@ dshm_split_transect <- function(transect.data, inter.dist, lwr, search.time, w, 
         shape_conv <- sf::st_as_sfc(transect.data) #conversion from SpatialLinesDataFrame to 'sfc' object
         pts_conv <- sf::st_as_sfc(pts) #conversion from SpatialPoints to 'sfc' object
         pts_buff <- sf::st_buffer(pts_conv, dist = inter.dist) #adding a buffer to the points
+        
+        #some valid CRSs appear not to be fully recognised by underlying bits of RGDAL
+        #leading to shape_conv having an equivalent but differently defined CRS to that
+        #of pts, pt_conv and pt_buff and triggering sf::st_difference() to generate an 
+        #"Error in geos_op2_geom("difference", x, y) : st_crs(x) == st_crs(y) is not TRUE".
+        #This workaround is an attempt to catch and address any such cases
+        if (sf::st_crs(shape_conv) !=sf::st_crs(pts_buff)) { 
+          attr(shape_conv,"crs") <- sf::st_crs(pts_buff)
+        }
+        
         diff <- sf::st_difference(shape_conv, sf::st_union(sf::st_combine(pts_buff))) #difference between lines and points gives segments
         diff <- sf::st_cast(diff, "LINESTRING") #conversion from 'MULTILINESTRING' to 'LINESTRING'
 
@@ -94,6 +104,18 @@ dshm_split_transect <- function(transect.data, inter.dist, lwr, search.time, w, 
     if(cap){
 
       whole <- rgeos::gBuffer(transect.data, width = w - 1, capStyle = "ROUND", byid = TRUE) #buffered transect. Note the -2 due to imperfection in difference calculation (below)
+      
+      #For some CRSs the outputs of the calls to raster::bind() and 
+      #rgeos::gBuffer() above can end up with a slightly different 
+      #but equivalent definitions the CRS.
+      #
+      #Try to identify those cases and thus prevent the next call 
+      #to rgeos::gDifference() generating lots of warnings about
+      #"spgeom1 and spgeom2 have different proj4 strings"
+      if (!identical(whole@proj4string,seg.buf@proj4string)) {
+        whole@proj4string<-seg.buf@proj4string
+      }
+      
       whole_seg <- rgeos::gDifference(whole, seg.buf, byid = TRUE, id = as.character(seg.buf$Transect.Label)) #Difference between whole transect and the segments. This is used to extract the capped ends!
 
       if(length(seg.buf)==2){ #if the segments are only 2, capped ends are used and bound together to get the final segments
@@ -133,6 +155,13 @@ dshm_split_transect <- function(transect.data, inter.dist, lwr, search.time, w, 
 
       }
     }
+  }
+
+  #Try to fix cases for CRSs in which output of raster::bind can
+  #end up with a slightly different definition of the CRS to that
+  #of the original transect.data.
+  if (!identical(transect.data@proj4string,seg.buf@proj4string)) {
+    seg.buf@proj4string <- transect.data@proj4string
   }
 
   return(seg.buf) #splitted transect with capped ends is returned

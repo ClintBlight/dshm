@@ -24,6 +24,23 @@
 dshm_split_transects<-function(transect.data, inter.dist = 0.01,
                                lwr, search.time = 15, w, parallel=FALSE, ncores=NULL, cap = TRUE){
 
+  #check for ID column required by later calls to dshm_split_transect
+  if(!("ID" %in% colnames(transect.data@data)))
+  {
+    stop("transect.data needs an 'ID' column in the associated data.frame.")
+  }
+
+  #dshm code and docs assume units of transect.data CRS to be 'Meter' 
+  #stop if they are "Degree" as any output from dshm unlikely to useful
+  crs_units <- sf::st_crs(transect.data)$units_gdal
+  if( crs_units == "Degree") {
+    stop("Coordinates of transect.data are in degrees, dshm expects a projected coordinate system with units in meters.")
+  }
+  #just warn if a Projected Coordinate Systen but with other units (e.g. ", Miles, etc.) 
+  if( crs_units != "Meter") {
+    warning(paste0("CRS units for transect.data were expected to be 'Meter' rather than '",crs_units,"'."))
+  }
+  
   t1 <- proc.time() #starts recording time
   cat("\n\n Splitting transects...\n\n ") #message
 
@@ -67,6 +84,14 @@ dshm_split_transects<-function(transect.data, inter.dist = 0.01,
     segments.bind <- do.call(raster::bind, segments) #binding all the segments together in one object
   } else {
     segments.bind <- segments[[1]]
+  }
+  
+  #For some CRSs in which outputs of raster::bind calls above can end up
+  #with a slightly different definition of the CRS to that of the individual 
+  #elements that have been bound together. 
+  #Try to fix such cases by reverting back to CRS of transect.data   
+  if (!identical(transect.data@proj4string,segments.bind@proj4string)) {
+    segments.bind@proj4string <- transect.data@proj4string
   }
   
   return(segments.bind) #returning bound segments
